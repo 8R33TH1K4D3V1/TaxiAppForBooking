@@ -4,7 +4,7 @@ import com.taxibooking.model.Driver;
 import com.taxibooking.service.DriverServiceImpl;
 
 import java.util.Collection;
-import java.util.List;
+
 
 /**
  * Controller class that manages Driver operations.
@@ -25,12 +25,7 @@ public class DriverController {
         return driverService.get(driverId);
     }
 
-    /**
-     * Retrieves all drivers as a List.
-     */
-    public List<Driver> getAllDrivers() {
-        return driverService.getAllDrivers();
-    }
+
 
     /**
      * Retrieves all drivers as a Collection (for enhanced-for loops).

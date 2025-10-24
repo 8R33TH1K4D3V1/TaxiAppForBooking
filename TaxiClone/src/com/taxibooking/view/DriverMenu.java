@@ -8,7 +8,7 @@ import com.taxibooking.model.Taxi;
 import com.taxibooking.model.Booking;
 import com.taxibooking.service.TaxiService;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.Scanner;
 
 /**
@@ -72,7 +72,7 @@ public class DriverMenu {
         System.out.print("Enter your Driver ID: ");
         final int driverId = input.nextInt();
         input.nextLine();
-        currentDriver = findDriverById(driverId);
+        currentDriver = get(driverId);
 
         if (currentDriver == null) {
             System.out.println("Driver ID not found. Exiting.");
@@ -85,8 +85,8 @@ public class DriverMenu {
     /**
      * Find a driver by their ID by checking all registered taxis.
      */
-    private Driver findDriverById(final int id) {
-        final List<Taxi> taxis = taxiController.get();
+    private Driver get(final int id) {
+        final Collection<Taxi> taxis = taxiController.get();
         for (final Taxi t : taxis) {
             if (t.getDriver() != null && t.getDriver().getId() == id) {
                 return t.getDriver();
@@ -109,14 +109,14 @@ public class DriverMenu {
         final String phone = input.nextLine();
         if (!phone.isEmpty()) currentDriver.setPhoneNo(phone);
 
-        driverController.update(currentDriver); // Save updated info
+        driverController.update(currentDriver);
         System.out.println("Profile updated successfully!");
     }
 
     // ---------------- Current Bookings ----------------
     private void viewCurrentBookings() {
         System.out.println("\n--- YOUR CURRENT BOOKINGS ---");
-        final List<Booking> allBookings = bookingController.get();
+        final Collection<Booking> allBookings = bookingController.get();
         boolean hasBooking = false;
 
         for (final Booking b : allBookings) {
@@ -139,7 +139,7 @@ public class DriverMenu {
     // ---------------- Booking History ----------------
     private void viewBookingHistory() {
         System.out.println("\n--- YOUR BOOKING HISTORY ---");
-        final List<Booking> allBookings = bookingController.get();
+        final Collection<Booking> allBookings = bookingController.get();
         boolean hasBooking = false;
 
         for (final Booking b : allBookings) {

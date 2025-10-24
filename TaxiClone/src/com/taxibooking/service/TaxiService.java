@@ -1,8 +1,7 @@
 package com.taxibooking.service;
 
 import com.taxibooking.model.Taxi;
-
-import java.util.List;
+import java.util.Collection;
 
 /**
  * Service interface for taxi management.
@@ -13,7 +12,7 @@ public interface TaxiService {
     /**
      * Retrieves all taxis as a list.
      */
-    List<Taxi> get();
+    Collection<Taxi> get();
 
     /**
      * Registers demo taxis for initial setup.

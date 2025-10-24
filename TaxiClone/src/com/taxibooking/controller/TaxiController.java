@@ -3,7 +3,7 @@ package com.taxibooking.controller;
 import com.taxibooking.model.Taxi;
 import com.taxibooking.service.TaxiService;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.ArrayList;
 
 /**
@@ -21,7 +21,7 @@ public class TaxiController {
     /**
      * Retrieves all taxis as a new list.
      */
-    public List<Taxi> get() {
+    public Collection<Taxi> get() {
         return new ArrayList<>(taxiService.get());
     }
 

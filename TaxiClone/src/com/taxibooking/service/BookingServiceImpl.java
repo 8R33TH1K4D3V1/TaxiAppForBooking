@@ -5,7 +5,8 @@ import com.taxibooking.model.Taxi;
 import com.taxibooking.model.Customer;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
+
 
 /**
  * Implementation of BookingService.
@@ -13,7 +14,7 @@ import java.util.List;
  */
 public class BookingServiceImpl implements BookingService {
 
-    private final List<Booking> bookings = new ArrayList<>();
+    private final Collection<Booking> bookings = new ArrayList<>();
     private int bookingIdCounter = 1;
 
     @Override
@@ -30,13 +31,13 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<Booking> get() {
+    public Collection<Booking> get() {
         return bookings;
     }
 
     @Override
-    public List<Booking> get(final int customerId) {
-        final List<Booking> result = new ArrayList<>();
+    public Collection<Booking> get(final int customerId) {
+        final Collection<Booking> result = new ArrayList<>();
         for (final Booking b : bookings) {
             if (b.getCustomer().getId() == customerId) {
                 result.add(b);

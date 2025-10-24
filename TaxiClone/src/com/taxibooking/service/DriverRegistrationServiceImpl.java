@@ -1,8 +1,7 @@
 package com.taxibooking.service;
 
 import com.taxibooking.model.Driver;
-
-import java.util.List;
+import java.util.Collection;
 
 /**
  * Implementation of DriverRegistrationService.
@@ -10,9 +9,9 @@ import java.util.List;
  */
 public class DriverRegistrationServiceImpl implements DriverRegistrationService {
 
-    private final List<Driver> drivers;
+    private final Collection<Driver> drivers;
 
-    public DriverRegistrationServiceImpl(final List<Driver> drivers) {
+    public DriverRegistrationServiceImpl(final Collection<Driver> drivers) {
         this.drivers = drivers;
     }
 
@@ -37,10 +36,5 @@ public class DriverRegistrationServiceImpl implements DriverRegistrationService 
         }
     }
 
-    /**
-     * Retrieves all drivers.
-     */
-    public List<Driver> getAllDrivers() {
-        return drivers;
-    }
+
 }

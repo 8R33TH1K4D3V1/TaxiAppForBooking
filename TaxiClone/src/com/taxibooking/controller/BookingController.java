@@ -6,7 +6,8 @@ import com.taxibooking.model.Customer;
 import com.taxibooking.service.BookingService;
 import com.taxibooking.service.BookingServiceImpl;
 
-import java.util.List;
+import java.util.Collection;
+
 
 /**
  * Controller class that handles booking-related operations.
@@ -26,14 +27,14 @@ public class BookingController {
     /**
      * Retrieves all bookings.
      */
-    public List<Booking> get() {
+    public Collection<Booking> get() {
         return bookingService.get();
     }
 
     /**
      * Retrieves bookings for a specific customer.
      */
-    public List<Booking> get(final int customerId) {
+    public Collection<Booking> get(final int customerId) {
         return bookingService.get(customerId);
     }
 

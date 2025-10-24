@@ -1,7 +1,6 @@
 package com.taxibooking.service;
 
 import com.taxibooking.model.Taxi;
-
 import java.util.Collection;
 
 /**

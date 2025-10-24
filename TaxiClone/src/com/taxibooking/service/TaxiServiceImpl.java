@@ -4,7 +4,8 @@ import com.taxibooking.model.Taxi;
 import com.taxibooking.model.Driver;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
+
 
 /**
  * Implementation of TaxiService.
@@ -12,10 +13,10 @@ import java.util.List;
  */
 public class TaxiServiceImpl implements TaxiService {
 
-    private final List<Taxi> taxis = new ArrayList<>();
+    private final Collection<Taxi> taxis = new ArrayList<>();
 
     @Override
-    public List<Taxi> get() {
+    public Collection<Taxi> get() {
         return taxis;
     }
 

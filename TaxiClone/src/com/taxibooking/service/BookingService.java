@@ -4,7 +4,7 @@ import com.taxibooking.model.Booking;
 import com.taxibooking.model.Taxi;
 import com.taxibooking.model.Customer;
 
-import java.util.List;
+import java.util.Collection;
 
 /**
  * Service interface for managing bookings.
@@ -20,12 +20,12 @@ public interface BookingService {
     /**
      * Retrieves all bookings.
      */
-    List<Booking> get();
+    Collection<Booking> get();
 
     /**
      * Retrieves bookings for a specific customer.
      */
-    List<Booking> get(final int customerId);
+    Collection<Booking> get(final int customerId);
 
     /**
      * Ends a booking by its ID.

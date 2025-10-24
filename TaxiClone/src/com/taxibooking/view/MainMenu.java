@@ -10,7 +10,6 @@ public class MainMenu {
 
     private final Scanner input = new Scanner(System.in);
 
-    // References to the sub-menus
     private final CustomerMenu customerMenu;
     private final AdminMenu adminMenu;
     private final DriverMenu driverMenu;
