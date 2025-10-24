@@ -4,25 +4,20 @@ package com.taxibooking.service;
  * Implementation of FareService.
  * Calculates taxi fares based on distance, AC preference, and seater type.
  */
-public class FareServiceImpl implements FareService {
+class FareServiceImpl implements FareService { // made package-private
 
-    private final double BASE_FARE = 50;
-    private final double AC_RATE_PER_KM = 20;
-    private final double NON_AC_RATE_PER_KM = 15;
+    private static final double BASE_FARE = 50;
+    private static final double AC_RATE_PER_KM = 20;
+    private static final double NON_AC_RATE_PER_KM = 15;
 
     @Override
-    public double calculate(final double distance, final boolean ac, final int seater) {
-        final double rate = ac ? AC_RATE_PER_KM : NON_AC_RATE_PER_KM;
-
-        // Adjust fare based on seater
-        final double seaterMultiplier;
-        switch (seater) {
-            case 4 -> seaterMultiplier = 1.0;   // normal
-            case 6 -> seaterMultiplier = 1.3;   // larger car
-            case 8 -> seaterMultiplier = 1.6;   // SUV/van
-            default -> seaterMultiplier = 1.0;  // default
-        }
-
+    public double calculate(double distance, boolean ac, int seater) {
+        double rate = ac ? AC_RATE_PER_KM : NON_AC_RATE_PER_KM;
+        double seaterMultiplier = switch (seater) {
+            case 6 -> 1.3;
+            case 8 -> 1.6;
+            default -> 1.0;
+        };
         return (BASE_FARE + (distance * rate)) * seaterMultiplier;
     }
 }

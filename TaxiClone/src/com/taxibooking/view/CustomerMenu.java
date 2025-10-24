@@ -13,8 +13,8 @@ import java.util.Collection;
 import java.util.Scanner;
 
 /**
- * Customer menu to interact with taxi booking system.
- * Allows viewing taxis, booking, ending rides, rating drivers, and fare estimation.
+ * Customer menu to interact with the taxi booking system.
+ * Supports viewing taxis, booking rides, ending bookings, rating drivers, and fare calculation.
  */
 public class CustomerMenu {
     private final Scanner input = new Scanner(System.in);
@@ -26,14 +26,12 @@ public class CustomerMenu {
     private final Collection<Customer> customerList = new ArrayList<>();
 
     public CustomerMenu(final TaxiService taxiService, final BookingController bookingController) {
-        this.taxiController = new TaxiController(taxiService);
+        this.taxiController = new TaxiController();
         this.bookingController = bookingController;
         this.fareController = new FareController();
     }
 
-    /**
-     * Main customer menu loop
-     */
+    /** Main customer menu loop */
     public void run() {
         login(); // Customer login or registration
 
@@ -54,9 +52,7 @@ public class CustomerMenu {
         } while (choice != 0);
     }
 
-    /**
-     * Customer login or registration
-     */
+    /** Customer login or registration */
     private void login() {
         System.out.print("Enter your Customer ID: ");
         final int id = input.nextInt();
@@ -77,9 +73,7 @@ public class CustomerMenu {
         System.out.println("Welcome, " + currentCustomer.getName() + "!");
     }
 
-    /**
-     * Display menu options
-     */
+    /** Display menu options */
     private void menu() {
         System.out.println("\n--- CUSTOMER MENU ---");
         System.out.println("1. View Taxis");
@@ -91,14 +85,13 @@ public class CustomerMenu {
         System.out.println("0. Back");
     }
 
+    /** Get user choice */
     private int choice() {
         System.out.print("Enter your choice: ");
         return input.nextInt();
     }
 
-    /**
-     * Show all taxis (assigned or unassigned)
-     */
+    /** Display all taxis including driver info */
     private void viewTaxis() {
         final Collection<Taxi> taxis = taxiController.get();
         System.out.println("\n--- ALL TAXIS ---");
@@ -113,10 +106,7 @@ public class CustomerMenu {
         }
     }
 
-
-    /**
-     * Book a taxi matching customer requirements
-     */
+    /** Book a taxi matching customer requirements */
     private void bookTaxi() {
         final Collection<Taxi> taxis = taxiController.get();
         System.out.print("Enter number of seats: ");
@@ -165,9 +155,7 @@ public class CustomerMenu {
         System.out.println("Taxi booked successfully! Fare: ₹" + fare);
     }
 
-    /**
-     * View customer's booking history
-     */
+    /** Display customer's booking history */
     private void viewBookingHistory() {
         final Collection<Booking> bookings = bookingController.get(currentCustomer.getId());
         System.out.println("\n--- YOUR BOOKING HISTORY ---");
@@ -184,9 +172,7 @@ public class CustomerMenu {
         }
     }
 
-    /**
-     * End an active booking
-     */
+    /** End an active booking */
     private void endBooking() {
         System.out.print("Enter Booking ID to end: ");
         final int bookingId = input.nextInt();
@@ -194,9 +180,7 @@ public class CustomerMenu {
         System.out.println("Booking ended.");
     }
 
-    /**
-     * Rate driver for completed booking
-     */
+    /** Rate driver for completed booking */
     private void rate() {
         final Collection<Booking> bookings = bookingController.get(currentCustomer.getId());
         final Collection<Booking> completed = bookings.stream()
@@ -230,14 +214,10 @@ public class CustomerMenu {
         final double rating = input.nextDouble();
 
         bookingController.rate(taxiId, rating);
-
         System.out.println("Thank you for rating your driver!");
     }
 
-
-    /**
-     * Estimate fare without booking
-     */
+    /** Estimate fare without booking */
     private void calculateFare() {
         System.out.print("Enter distance (km): ");
         final double distance = input.nextDouble();

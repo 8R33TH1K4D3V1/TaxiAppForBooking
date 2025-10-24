@@ -1,43 +1,34 @@
 package com.taxibooking.controller;
 
 import com.taxibooking.model.Driver;
-import com.taxibooking.service.DriverServiceImpl;
-
+import com.taxibooking.service.DriverService;
 import java.util.Collection;
 
-
 /**
- * Controller class that manages Driver operations.
- * Delegates all logic to the DriverService layer.
+ * Controller for driver operations.
+ * Delegates all logic to DriverService.
  */
 public class DriverController {
 
-    private final DriverServiceImpl driverService;
+    private final DriverService driverService;
 
-    public DriverController(final DriverServiceImpl driverService) {
+    /** Constructor injection of DriverService */
+    public DriverController(DriverService driverService) {
         this.driverService = driverService;
     }
 
-    /**
-     * Retrieves a driver by their ID.
-     */
-    public Driver get(final int driverId) {
+    /** Get a driver by ID */
+    public Driver get(int driverId) {
         return driverService.get(driverId);
     }
 
-
-
-    /**
-     * Retrieves all drivers as a Collection (for enhanced-for loops).
-     */
+    /** Get all drivers */
     public Collection<Driver> get() {
         return driverService.get();
     }
 
-    /**
-     * Updates an existing driver's details.
-     */
-    public void update(final Driver driver) {
+    /** Update driver details */
+    public void update(Driver driver) {
         driverService.update(driver);
     }
 }

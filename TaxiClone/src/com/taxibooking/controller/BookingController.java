@@ -4,51 +4,38 @@ import com.taxibooking.model.Booking;
 import com.taxibooking.model.Taxi;
 import com.taxibooking.model.Customer;
 import com.taxibooking.service.BookingService;
-import com.taxibooking.service.BookingServiceImpl;
-
 import java.util.Collection;
 
-
 /**
- * Controller class that handles booking-related operations.
- * It delegates all business logic to the BookingService layer.
+ * Controller for taxi bookings.
+ * Delegates all operations to BookingService.
  */
 public class BookingController {
 
-    private final BookingService bookingService = new BookingServiceImpl();
+    private final BookingService bookingService = BookingService.getInstance();
 
-    /**
-     * Books a taxi for a customer with given trip details.
-     */
-    public void book(final Taxi taxi, final Customer customer, final String pickup, final String drop, final double fare) {
+    /** Book a taxi for a customer */
+    public void book(Taxi taxi, Customer customer, String pickup, String drop, double fare) {
         bookingService.book(taxi, customer, pickup, drop, fare);
     }
 
-    /**
-     * Retrieves all bookings.
-     */
+    /** Get all bookings */
     public Collection<Booking> get() {
         return bookingService.get();
     }
 
-    /**
-     * Retrieves bookings for a specific customer.
-     */
-    public Collection<Booking> get(final int customerId) {
+    /** Get bookings for a specific customer */
+    public Collection<Booking> get(int customerId) {
         return bookingService.get(customerId);
     }
 
-    /**
-     * Ends a booking by its ID.
-     */
-    public void end(final int bookingId) {
+    /** End an active booking */
+    public void end(int bookingId) {
         bookingService.end(bookingId);
     }
 
-    /**
-     * Updates the rating of a taxi after trip completion.
-     */
-    public void rate(final int taxiId, final double rating) {
+    /** Rate a driver/taxi */
+    public void rate(int taxiId, double rating) {
         bookingService.rate(taxiId, rating);
     }
 }

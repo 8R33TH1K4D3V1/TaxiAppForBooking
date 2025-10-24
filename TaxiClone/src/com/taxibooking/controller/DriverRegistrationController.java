@@ -4,27 +4,24 @@ import com.taxibooking.model.Driver;
 import com.taxibooking.service.DriverRegistrationService;
 
 /**
- * Controller for handling driver registration and unregistration.
+ * Controller for driver registration operations.
  * Delegates all logic to the DriverRegistrationService layer.
  */
 public class DriverRegistrationController {
 
     private final DriverRegistrationService driverRegistrationService;
 
+    /** Constructor injection of DriverRegistrationService */
     public DriverRegistrationController(final DriverRegistrationService driverRegistrationService) {
         this.driverRegistrationService = driverRegistrationService;
     }
 
-    /**
-     * Registers a new driver.
-     */
+    /** Register a new driver */
     public void register(final Driver driver) {
         driverRegistrationService.register(driver);
     }
 
-    /**
-     * Unregisters a driver by their ID.
-     */
+    /** Unregister a driver by ID */
     public void unregister(final int id) {
         driverRegistrationService.unregister(id);
     }

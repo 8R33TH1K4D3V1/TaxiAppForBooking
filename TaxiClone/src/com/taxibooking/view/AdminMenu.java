@@ -8,7 +8,7 @@ import java.util.Scanner;
 
 /**
  * Admin menu for managing taxis and drivers.
- * Supports adding, viewing, removing, and assigning drivers to taxis.
+ * Provides options to add, view, remove, and assign drivers to taxis.
  */
 public class AdminMenu {
 
@@ -28,31 +28,16 @@ public class AdminMenu {
         this.driverRegController = driverRegController;
     }
 
-    /**
-     * Runs the admin menu loop.
-     */
+    /** Runs the main admin menu loop. */
     public void run() {
-        if (!adminLogin()) { // check admin credentials
+        if (!adminLogin()) { // verify admin credentials
             System.out.println("Access denied. Returning to main menu.");
             return;
         }
 
         while (true) {
-            // Display menu options
-            System.out.println("\n--- Admin Menu ---");
-            System.out.println("1. Add Taxi");
-            System.out.println("2. Add Driver");
-            System.out.println("3. View Taxis");
-            System.out.println("4. View Assigned Taxis");
-            System.out.println("5. View Unassigned Drivers");
-            System.out.println("6. Remove Taxi");
-            System.out.println("7. Remove Driver");
-            System.out.println("8. Assign Driver to Taxi");
-            System.out.println("9. Exit");
-            System.out.print("Choose option: ");
-
-            final int choice = sc.nextInt();
-            sc.nextLine();
+            displayMenu();
+            final int choice = sc.nextInt(); sc.nextLine();
 
             switch (choice) {
                 case 1 -> addTaxi();
@@ -63,18 +48,28 @@ public class AdminMenu {
                 case 6 -> removeTaxi();
                 case 7 -> removeDriver();
                 case 8 -> assignDriverToTaxi();
-                case 9 -> { // exit admin menu
-                    System.out.println("Exiting Admin Menu...");
-                    return;
-                }
+                case 9 -> { System.out.println("Exiting Admin Menu..."); return; }
                 default -> System.out.println("Invalid choice! Try again.");
             }
         }
     }
 
-    /**
-     * Admin login check
-     */
+    /** Displays the admin menu options. */
+    private void displayMenu() {
+        System.out.println("\n--- Admin Menu ---");
+        System.out.println("1. Add Taxi");
+        System.out.println("2. Add Driver");
+        System.out.println("3. View Taxis");
+        System.out.println("4. View Assigned Taxis");
+        System.out.println("5. View Unassigned Drivers");
+        System.out.println("6. Remove Taxi");
+        System.out.println("7. Remove Driver");
+        System.out.println("8. Assign Driver to Taxi");
+        System.out.println("9. Exit");
+        System.out.print("Choose option: ");
+    }
+
+    /** Verifies admin login credentials. */
     private boolean adminLogin() {
         System.out.print("Enter Admin username: ");
         final String username = sc.nextLine().trim();
@@ -83,9 +78,7 @@ public class AdminMenu {
         return "admin".equals(username) && "admin123".equals(password);
     }
 
-    /**
-     * Add new taxi
-     */
+    /** Adds a new taxi. */
     private void addTaxi() {
         System.out.print("Enter Taxi ID: ");
         final int id = sc.nextInt(); sc.nextLine();
@@ -100,9 +93,7 @@ public class AdminMenu {
         taxiRegController.register(taxi);
     }
 
-    /**
-     * Add new driver
-     */
+    /** Adds a new driver. */
     private void addDriver() {
         System.out.print("Enter Driver ID: ");
         final int id = sc.nextInt(); sc.nextLine();
@@ -116,9 +107,7 @@ public class AdminMenu {
         driverRegController.register(driver);
     }
 
-    /**
-     * View all taxis
-     */
+    /** Displays all taxis including driver info. */
     private void viewAllTaxis() {
         System.out.println("\n--- All Taxis ---");
         for (final Taxi taxi : taxiController.get()) {
@@ -131,9 +120,7 @@ public class AdminMenu {
         }
     }
 
-    /**
-     * View only taxis with assigned drivers
-     */
+    /** Displays taxis that have assigned drivers. */
     private void viewAssignedTaxis() {
         System.out.println("\n--- Assigned Taxis ---");
         for (final Taxi taxi : taxiController.get()) {
@@ -147,9 +134,7 @@ public class AdminMenu {
         }
     }
 
-    /**
-     * View drivers not assigned to any taxi
-     */
+    /** Displays drivers not assigned to any taxi. */
     private void viewUnassignedDrivers() {
         System.out.println("\n--- Unassigned Drivers ---");
         for (final Driver driver : driverController.get()) {
@@ -164,18 +149,14 @@ public class AdminMenu {
         }
     }
 
-    /**
-     * Remove taxi
-     */
+    /** Removes a taxi by ID. */
     private void removeTaxi() {
         System.out.print("Enter Taxi ID to remove: ");
         final int id = sc.nextInt(); sc.nextLine();
         taxiRegController.unregister(id);
     }
 
-    /**
-     * Remove driver and unassign from any taxi
-     */
+    /** Removes a driver and unassigns from any taxi. */
     private void removeDriver() {
         System.out.print("Enter Driver ID to remove: ");
         final int id = sc.nextInt(); sc.nextLine();
@@ -188,9 +169,7 @@ public class AdminMenu {
         }
     }
 
-    /**
-     * Assign a driver to a taxi
-     */
+    /** Assigns a driver to a taxi. */
     private void assignDriverToTaxi() {
         System.out.print("Enter Taxi ID: ");
         final int taxiId = sc.nextInt();
@@ -200,14 +179,8 @@ public class AdminMenu {
         final Taxi taxi = taxiController.get(taxiId);
         final Driver driver = driverController.get(driverId);
 
-        if (taxi == null) {
-            System.out.println("Taxi not found!");
-            return;
-        }
-        if (driver == null) {
-            System.out.println("Driver not found!");
-            return;
-        }
+        if (taxi == null) { System.out.println("Taxi not found!"); return; }
+        if (driver == null) { System.out.println("Driver not found!"); return; }
 
         taxi.setDriver(driver);
         System.out.println("Driver " + driver.getName() + " assigned to Taxi " + taxi.getId());

@@ -5,22 +5,21 @@ import java.util.Collection;
 
 /**
  * Service interface for managing drivers.
- * Defines operations to update and retrieve driver information.
+ * Provides operations to update and retrieve driver details.
  */
 public interface DriverService {
 
-    /**
-     * Updates the details of a driver.
-     */
-    void update(final Driver driver);
+    /** Updates an existing driver. */
+    void update(Driver driver);
 
-    /**
-     * Retrieves a driver by their ID.
-     */
-    Driver get(final int id);
+    /** Retrieves a driver by ID. */
+    Driver get(int id);
 
-    /**
-     * Retrieves all drivers as a collection.
-     */
+    /** Retrieves all drivers. */
     Collection<Driver> get();
+
+    /** Factory method to get a DriverService instance with a driver list. */
+    static DriverService getInstance(final Collection<Driver> drivers) {
+        return DriverServiceImpl.getInstance(drivers);
+    }
 }

@@ -6,12 +6,13 @@ import java.util.Collection;
 /**
  * Implementation of TaxiRegistrationService.
  * Handles registering and unregistering taxis.
+ * Hidden from outside access — package-private.
  */
-public class TaxiRegistrationServiceImpl implements TaxiRegistrationService {
+final class TaxiRegistrationServiceImpl implements TaxiRegistrationService {
 
     private final Collection<Taxi> taxis;
 
-    public TaxiRegistrationServiceImpl(final Collection<Taxi> taxis) {
+    TaxiRegistrationServiceImpl(final Collection<Taxi> taxis) {
         this.taxis = taxis;
     }
 
@@ -36,9 +37,7 @@ public class TaxiRegistrationServiceImpl implements TaxiRegistrationService {
         }
     }
 
-    /**
-     * Retrieves all registered taxis.
-     */
+    @Override
     public Collection<Taxi> get() {
         return taxis;
     }

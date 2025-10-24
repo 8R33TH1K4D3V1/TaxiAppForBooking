@@ -22,14 +22,14 @@ public class Taxi {
         this.isAvailable = isAvailable;
     }
 
-    // ===== Getters =====
+    /** Getters */
     public int getId() { return id; }
     public Driver getDriver() { return driver; }
     public int getSeater() { return seater; }
     public boolean isAcAvailable() { return isAcAvailable; }
     public boolean isAvailable() { return isAvailable; }
 
-    // ===== Setters  =====
+    /** Setter*/
     public void setId(final int id) { this.id = id; }
     public void setDriver(final Driver driver) { this.driver = driver; }
     public void setAvailable(final boolean available) { this.isAvailable = available; }

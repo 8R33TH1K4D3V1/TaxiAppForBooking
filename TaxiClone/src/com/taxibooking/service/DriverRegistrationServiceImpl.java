@@ -6,12 +6,13 @@ import java.util.Collection;
 /**
  * Implementation of DriverRegistrationService.
  * Handles registering and unregistering drivers.
+ * Hidden from external access — package-private.
  */
-public class DriverRegistrationServiceImpl implements DriverRegistrationService {
+final class DriverRegistrationServiceImpl implements DriverRegistrationService {
 
     private final Collection<Driver> drivers;
 
-    public DriverRegistrationServiceImpl(final Collection<Driver> drivers) {
+    DriverRegistrationServiceImpl(final Collection<Driver> drivers) {
         this.drivers = drivers;
     }
 
@@ -35,6 +36,4 @@ public class DriverRegistrationServiceImpl implements DriverRegistrationService 
             System.out.println("Driver ID not found.");
         }
     }
-
-
 }

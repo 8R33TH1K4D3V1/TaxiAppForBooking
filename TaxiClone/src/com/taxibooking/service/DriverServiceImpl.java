@@ -3,20 +3,25 @@ package com.taxibooking.service;
 import com.taxibooking.model.Driver;
 import java.util.Collection;
 
-/**
- * Implementation of DriverService.
- * Manages updating and retrieving drivers from a shared driver collection.
- */
-public class DriverServiceImpl implements DriverService {
+class DriverServiceImpl implements DriverService {
 
     private final Collection<Driver> drivers;
 
-    public DriverServiceImpl(final Collection<Driver> drivers) {
+    private static DriverService instance;
+
+    private DriverServiceImpl(Collection<Driver> drivers) {
         this.drivers = drivers;
     }
 
+    public static DriverService getInstance(Collection<Driver> drivers) {
+        if (instance == null) {
+            instance = new DriverServiceImpl(drivers);
+        }
+        return instance;
+    }
+
     @Override
-    public void update(final Driver updatedDriver) {
+    public void update(Driver updatedDriver) {
         Driver existingDriver = get(updatedDriver.getId());
         if (existingDriver != null) {
             drivers.remove(existingDriver);
@@ -25,7 +30,7 @@ public class DriverServiceImpl implements DriverService {
     }
 
     @Override
-    public Driver get(final int id) {
+    public Driver get(int id) {
         return drivers.stream()
                 .filter(d -> d.getId() == id)
                 .findFirst()

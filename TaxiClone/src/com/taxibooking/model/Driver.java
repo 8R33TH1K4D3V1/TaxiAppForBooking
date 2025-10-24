@@ -23,7 +23,7 @@ public class Driver {
         this.name = name;
     }
 
-    // Getters
+    /** Getters */
     public int getId() {
         return id;
     }
@@ -40,7 +40,7 @@ public class Driver {
         return phoneNo;
     }
 
-    // Setters
+    /** Setters*/
     public void setId(final int id) {
         this.id = id;
     }

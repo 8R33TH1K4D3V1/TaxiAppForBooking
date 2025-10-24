@@ -2,16 +2,15 @@ package com.taxibooking.service;
 
 /**
  * Service interface for fare calculation.
+ * Provides method to compute fare based on trip details.
  */
 public interface FareService {
 
-    /**
-     * Calculates the fare based on distance, AC preference, and seater type.
-     *
-     * @param distance Distance of the trip
-     * @param ac       Whether AC is required
-     * @param seater   Number of seats in the taxi
-     * @return Calculated fare
-     */
-    double calculate(final double distance, final boolean ac, final int seater);
+    /** Calculates fare using distance, AC requirement, and seater count. */
+    double calculate(double distance, boolean ac, int seater);
+
+    /** Factory method to obtain a FareService instance. */
+    static FareService getInstance() {
+        return new FareServiceImpl();
+    }
 }

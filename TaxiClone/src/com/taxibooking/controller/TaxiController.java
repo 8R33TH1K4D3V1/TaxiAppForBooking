@@ -14,12 +14,15 @@ public class TaxiController {
 
     private final TaxiService taxiService;
 
-    public TaxiController(final TaxiService taxiService) {
-        this.taxiService = taxiService;
+    /**
+     * Constructor using singleton TaxiService.
+     */
+    public TaxiController() {
+        this.taxiService = TaxiService.getInstance(new ArrayList<>()); // empty list passed
     }
 
     /**
-     * Retrieves all taxis as a new list.
+     * Retrieves all taxis as a new list (to avoid external modifications).
      */
     public Collection<Taxi> get() {
         return new ArrayList<>(taxiService.get());
@@ -28,12 +31,26 @@ public class TaxiController {
     /**
      * Retrieves a taxi by its ID.
      */
-    public Taxi get(final int id) {
-        for (final Taxi taxi : get()) {
+    public Taxi get(int id) {
+        for (Taxi taxi : get()) {
             if (taxi.getId() == id) {
                 return taxi;
             }
         }
         return null;
+    }
+
+    /**
+     * Registers demo taxis through the service.
+     */
+    public void registerDemoTaxis() {
+        taxiService.registerDemoTaxis();
+    }
+
+    /**
+     * Adds a taxi via the service.
+     */
+    public void get(Taxi taxi) {
+        taxiService.get(taxi);
     }
 }

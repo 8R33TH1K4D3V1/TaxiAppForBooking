@@ -12,7 +12,8 @@ import java.util.Collection;
 import java.util.Scanner;
 
 /**
- * Menu for drivers to view current bookings, edit profile, and see booking history.
+ * Driver menu for managing driver actions.
+ * Supports viewing current bookings, editing profile, and booking history.
  */
 public class DriverMenu {
 
@@ -22,22 +23,18 @@ public class DriverMenu {
     private final DriverController driverController;
     private Driver currentDriver;
 
-    /**
-     * Constructs the DriverMenu with required controllers.
-     */
+    /** Constructor with required controllers */
     public DriverMenu(final TaxiService taxiService,
                       final BookingController bookingController,
                       final DriverController driverController) {
-        this.taxiController = new TaxiController(taxiService);
+        this.taxiController = new TaxiController(); // singleton TaxiController
         this.bookingController = bookingController;
         this.driverController = driverController;
     }
 
-    /**
-     * Main driver menu loop: login, display options, and handle actions.
-     */
+    /** Main driver menu loop */
     public void run() {
-        login(); // Prompt for driver login
+        login(); // Prompt driver login
 
         int choice;
         do {
@@ -46,18 +43,16 @@ public class DriverMenu {
             input.nextLine();
 
             switch (choice) {
-                case 1 -> viewCurrentBookings();
-                case 2 -> editProfile();
-                case 3 -> viewBookingHistory();
+                case 1 -> viewCurrentBookings(); // Show active bookings
+                case 2 -> editProfile();         // Edit driver profile
+                case 3 -> viewBookingHistory();  // Show all bookings
                 case 0 -> System.out.println("Back to main menu...");
                 default -> System.out.println("Invalid choice!");
             }
         } while (choice != 0);
     }
 
-    /**
-     * Display the driver menu options.
-     */
+    /** Display driver menu options */
     private void menu() {
         System.out.println("\n--- DRIVER MENU ---");
         System.out.println("1. Current Booking");
@@ -68,6 +63,7 @@ public class DriverMenu {
     }
 
     // ---------------- Login ----------------
+    /** Prompt driver for ID and validate login */
     private void login() {
         System.out.print("Enter your Driver ID: ");
         final int driverId = input.nextInt();
@@ -82,9 +78,7 @@ public class DriverMenu {
         System.out.println("Welcome, " + currentDriver.getName() + "!");
     }
 
-    /**
-     * Find a driver by their ID by checking all registered taxis.
-     */
+    /** Find a driver by ID by checking all registered taxis */
     private Driver get(final int id) {
         final Collection<Taxi> taxis = taxiController.get();
         for (final Taxi t : taxis) {
@@ -96,6 +90,7 @@ public class DriverMenu {
     }
 
     // ---------------- Edit Profile ----------------
+    /** Edit driver's name and phone number */
     private void editProfile() {
         System.out.println("\n--- EDIT PROFILE ---");
 
@@ -109,11 +104,12 @@ public class DriverMenu {
         final String phone = input.nextLine();
         if (!phone.isEmpty()) currentDriver.setPhoneNo(phone);
 
-        driverController.update(currentDriver);
+        driverController.update(currentDriver); // Save updates
         System.out.println("Profile updated successfully!");
     }
 
     // ---------------- Current Bookings ----------------
+    /** Display all active bookings assigned to the driver */
     private void viewCurrentBookings() {
         System.out.println("\n--- YOUR CURRENT BOOKINGS ---");
         final Collection<Booking> allBookings = bookingController.get();
@@ -137,6 +133,7 @@ public class DriverMenu {
     }
 
     // ---------------- Booking History ----------------
+    /** Display all bookings (active and completed) for the driver */
     private void viewBookingHistory() {
         System.out.println("\n--- YOUR BOOKING HISTORY ---");
         final Collection<Booking> allBookings = bookingController.get();

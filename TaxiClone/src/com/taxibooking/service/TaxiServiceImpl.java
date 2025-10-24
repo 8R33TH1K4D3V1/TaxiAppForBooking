@@ -3,17 +3,27 @@ package com.taxibooking.service;
 import com.taxibooking.model.Taxi;
 import com.taxibooking.model.Driver;
 
-import java.util.ArrayList;
 import java.util.Collection;
-
 
 /**
  * Implementation of TaxiService.
- * Manages taxi list and registers demo taxis.
+ * Uses singleton pattern and stores a collection of taxis.
  */
-public class TaxiServiceImpl implements TaxiService {
+class TaxiServiceImpl implements TaxiService {
 
-    private final Collection<Taxi> taxis = new ArrayList<>();
+    private final Collection<Taxi> taxis;
+    private static TaxiService instance;
+
+    private TaxiServiceImpl(Collection<Taxi> taxis) {
+        this.taxis = taxis;
+    }
+
+    public static TaxiService getInstance(Collection<Taxi> taxis) {
+        if (instance == null) {
+            instance = new TaxiServiceImpl(taxis);
+        }
+        return instance;
+    }
 
     @Override
     public Collection<Taxi> get() {
@@ -31,7 +41,7 @@ public class TaxiServiceImpl implements TaxiService {
     }
 
     @Override
-    public void get(final Taxi taxi) {
+    public void get(Taxi taxi) {
         taxis.add(taxi);
     }
 }
