@@ -13,12 +13,12 @@ public class DriverController {
     private final DriverService driverService;
 
     /** Constructor injection of DriverService */
-    public DriverController(DriverService driverService) {
+    public DriverController(final DriverService driverService) {
         this.driverService = driverService;
     }
 
     /** Get a driver by ID */
-    public Driver get(int driverId) {
+    public Driver get(final int driverId) {
         return driverService.get(driverId);
     }
 
@@ -28,7 +28,7 @@ public class DriverController {
     }
 
     /** Update driver details */
-    public void update(Driver driver) {
+    public void update(final Driver driver) {
         driverService.update(driver);
     }
 }

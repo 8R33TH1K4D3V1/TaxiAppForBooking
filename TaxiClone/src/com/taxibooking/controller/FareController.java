@@ -13,7 +13,7 @@ public class FareController {
     /**
      * Calculate fare based on distance, AC requirement, and number of seats.
      */
-    public double calculate(double distance, boolean ac, int seater) {
+    public double calculate(final double distance, final boolean ac, final int seater) {
         return fareService.calculate(distance, ac, seater);
     }
 }

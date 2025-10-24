@@ -28,13 +28,21 @@ public class Booking {
 
     /** Getters */
     public int getId() { return id; }
+
     public Taxi getTaxi() { return taxi; }
+
     public Customer getCustomer() { return customer; }
+
     public String getPickupLocation() { return pickupLocation; }
+
     public String getDropLocation() { return dropLocation; }
+
     public double getFare() { return fare; }
+
     public boolean isActive() { return isActive; }
 
     /** Setter */
-    public void setActive(final boolean active) { this.isActive = active; }
+    public void setActive(final boolean active) {
+        this.isActive = active;
+    }
 }

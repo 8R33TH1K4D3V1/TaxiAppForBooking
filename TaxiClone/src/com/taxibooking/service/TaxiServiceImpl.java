@@ -14,11 +14,11 @@ class TaxiServiceImpl implements TaxiService {
     private final Collection<Taxi> taxis;
     private static TaxiService instance;
 
-    private TaxiServiceImpl(Collection<Taxi> taxis) {
+    private TaxiServiceImpl(final Collection<Taxi> taxis) {
         this.taxis = taxis;
     }
 
-    public static TaxiService getInstance(Collection<Taxi> taxis) {
+    public static TaxiService getInstance(final Collection<Taxi> taxis) {
         if (instance == null) {
             instance = new TaxiServiceImpl(taxis);
         }
@@ -41,7 +41,7 @@ class TaxiServiceImpl implements TaxiService {
     }
 
     @Override
-    public void get(Taxi taxi) {
+    public void get(final Taxi taxi) {
         taxis.add(taxi);
     }
 }

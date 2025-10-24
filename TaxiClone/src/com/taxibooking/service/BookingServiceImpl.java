@@ -10,19 +10,19 @@ import java.util.Collection;
  * Implementation of BookingService.
  * Handles booking creation, retrieval, ending, and rating drivers.
  */
-class BookingServiceImpl implements BookingService { // package-private (hidden)
+class BookingServiceImpl implements BookingService {
 
     private final Collection<Booking> bookings = new ArrayList<>();
     private int bookingIdCounter = 1;
 
     @Override
-    public void book(Taxi taxi, Customer customer, String pickup, String drop, double fare) {
+    public void book(final Taxi taxi, final Customer customer, final String pickup, final String drop, final double fare) {
         if (!taxi.isAvailable()) {
             System.out.println("Taxi ID " + taxi.getId() + " is not available.");
             return;
         }
 
-        Booking booking = new Booking(bookingIdCounter++, taxi, customer, pickup, drop, fare);
+        final Booking booking = new Booking(bookingIdCounter++, taxi, customer, pickup, drop, fare);
         bookings.add(booking);
         taxi.setAvailable(false);
         System.out.println("Booking successful! Booking ID: " + booking.getId() + ", Fare: ₹" + fare);
@@ -34,9 +34,9 @@ class BookingServiceImpl implements BookingService { // package-private (hidden)
     }
 
     @Override
-    public Collection<Booking> get(int customerId) {
-        Collection<Booking> result = new ArrayList<>();
-        for (Booking b : bookings) {
+    public Collection<Booking> get(final int customerId) {
+        final Collection<Booking> result = new ArrayList<>();
+        for (final Booking b : bookings) {
             if (b.getCustomer().getId() == customerId) {
                 result.add(b);
             }
@@ -45,8 +45,8 @@ class BookingServiceImpl implements BookingService { // package-private (hidden)
     }
 
     @Override
-    public void end(int bookingId) {
-        Booking booking = bookings.stream()
+    public void end(final int bookingId) {
+        final Booking booking = bookings.stream()
                 .filter(b -> b.getId() == bookingId && b.isActive())
                 .findFirst()
                 .orElse(null);
@@ -61,8 +61,8 @@ class BookingServiceImpl implements BookingService { // package-private (hidden)
     }
 
     @Override
-    public void rate(int taxiId, double rating) {
-        Booking booking = bookings.stream()
+    public void rate(final int taxiId, final double rating) {
+        final Booking booking = bookings.stream()
                 .filter(b -> b.getTaxi().getId() == taxiId)
                 .findFirst()
                 .orElse(null);

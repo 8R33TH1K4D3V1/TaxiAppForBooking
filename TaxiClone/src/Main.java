@@ -7,6 +7,7 @@ import com.taxibooking.view.*;
 import java.util.ArrayList;
 import java.util.Collection;
 
+/** Entry point for the Taxi Booking System */
 public final class Main {
 
     private final TaxiService taxiService;
@@ -24,11 +25,10 @@ public final class Main {
     private final DriverMenu driverMenu;
     private final MainMenu mainMenu;
 
-
+    /** Constructor initializes all services, controllers, and menus */
     public Main() {
-
         this.driverList = new ArrayList<>();
-        Collection<Taxi> taxiList = new ArrayList<>();
+        final Collection<Taxi> taxiList = new ArrayList<>();
 
         this.taxiService = TaxiService.getInstance(taxiList);
         this.driverService = DriverService.getInstance(driverList);
@@ -45,7 +45,7 @@ public final class Main {
         this.mainMenu = new MainMenu(customerMenu, adminMenu, driverMenu);
     }
 
-
+    /** Main method to start the application */
     public static void main(final String[] args) {
         final Main app = new Main();
         app.taxiService.registerDemoTaxis();

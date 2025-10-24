@@ -30,7 +30,7 @@ public class AdminMenu {
 
     /** Runs the main admin menu loop. */
     public void run() {
-        if (!adminLogin()) { // verify admin credentials
+        if (!adminLogin()) {
             System.out.println("Access denied. Returning to main menu.");
             return;
         }

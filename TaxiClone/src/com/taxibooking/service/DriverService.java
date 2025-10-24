@@ -10,10 +10,10 @@ import java.util.Collection;
 public interface DriverService {
 
     /** Updates an existing driver. */
-    void update(Driver driver);
+    void update(final Driver driver);
 
     /** Retrieves a driver by ID. */
-    Driver get(int id);
+    Driver get(final int id);
 
     /** Retrieves all drivers. */
     Collection<Driver> get();

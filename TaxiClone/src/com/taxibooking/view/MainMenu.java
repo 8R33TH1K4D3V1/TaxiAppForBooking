@@ -22,22 +22,27 @@ public class MainMenu {
     public void run() {
         int choice;
         do {
-            System.out.println("\n=== MAIN MENU ===");
-            System.out.println("1. Customer Menu");
-            System.out.println("2. Admin Menu");
-            System.out.println("3. Driver Menu");
-            System.out.println("0. Exit");
-            System.out.print("Enter choice: ");
-
+            displayMenu();
             choice = input.nextInt();
+            input.nextLine();
 
             switch (choice) {
                 case 1 -> customerMenu.run();
                 case 2 -> adminMenu.run();
                 case 3 -> driverMenu.run();
                 case 0 -> System.out.println("Exiting...");
-                default -> System.out.println("Invalid choice!");
+                default -> System.out.println("Invalid choice! Please try again.");
             }
         } while (choice != 0);
+    }
+
+    /** Prints the main menu options */
+    private void displayMenu() {
+        System.out.println("\n=== MAIN MENU ===");
+        System.out.println("1. Customer Menu");
+        System.out.println("2. Admin Menu");
+        System.out.println("3. Driver Menu");
+        System.out.println("0. Exit");
+        System.out.print("Enter choice: ");
     }
 }

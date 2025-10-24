@@ -13,19 +13,19 @@ import java.util.Collection;
 public interface BookingService {
 
     /** Books a taxi for a customer with trip details. */
-    void book(Taxi taxi, Customer customer, String pickup, String drop, double fare);
+    void book(final Taxi taxi, final Customer customer, final String pickup, final String drop, final double fare);
 
     /** Retrieves all bookings. */
     Collection<Booking> get();
 
     /** Retrieves bookings for a specific customer by ID. */
-    Collection<Booking> get(int customerId);
+    Collection<Booking> get(final int customerId);
 
     /** Ends a booking by its ID. */
-    void end(int bookingId);
+    void end(final int bookingId);
 
     /** Rates a taxi after trip completion. */
-    void rate(int taxiId, double rating);
+    void rate(final int taxiId, final double rating);
 
     /** Factory method to get a BookingService instance. */
     static BookingService getInstance() {

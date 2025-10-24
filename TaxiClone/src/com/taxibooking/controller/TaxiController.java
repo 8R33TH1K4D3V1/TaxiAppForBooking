@@ -18,7 +18,7 @@ public class TaxiController {
      * Constructor using singleton TaxiService.
      */
     public TaxiController() {
-        this.taxiService = TaxiService.getInstance(new ArrayList<>()); // empty list passed
+        this.taxiService = TaxiService.getInstance(new ArrayList<>());
     }
 
     /**
@@ -31,8 +31,8 @@ public class TaxiController {
     /**
      * Retrieves a taxi by its ID.
      */
-    public Taxi get(int id) {
-        for (Taxi taxi : get()) {
+    public Taxi get(final int id) {
+        for (final Taxi taxi : get()) {
             if (taxi.getId() == id) {
                 return taxi;
             }
@@ -50,7 +50,7 @@ public class TaxiController {
     /**
      * Adds a taxi via the service.
      */
-    public void get(Taxi taxi) {
+    public void get(final Taxi taxi) {
         taxiService.get(taxi);
     }
 }

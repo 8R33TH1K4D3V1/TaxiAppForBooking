@@ -33,7 +33,7 @@ public class CustomerMenu {
 
     /** Main customer menu loop */
     public void run() {
-        login(); // Customer login or registration
+        login();
 
         int choice;
         do {
@@ -44,7 +44,7 @@ public class CustomerMenu {
                 case 2 -> bookTaxi();
                 case 3 -> viewBookingHistory();
                 case 4 -> endBooking();
-                case 5 -> rate();
+                case 5 -> rateDriver();
                 case 6 -> calculateFare();
                 case 0 -> System.out.println("Back to main menu...");
                 default -> System.out.println("Invalid choice!");
@@ -95,20 +95,25 @@ public class CustomerMenu {
     private void viewTaxis() {
         final Collection<Taxi> taxis = taxiController.get();
         System.out.println("\n--- ALL TAXIS ---");
-        for (final Taxi t : taxis) {
-            System.out.println("Taxi ID: " + t.getId()
-                    + ", Driver: " + (t.getDriver() != null ? t.getDriver().getName() : "Not assigned")
-                    + ", Phone: " + (t.getDriver() != null ? t.getDriver().getPhoneNo() : "N/A")
-                    + ", Rating: " + (t.getDriver() != null ? t.getDriver().getRating() : 0.0)
-                    + ", Seater: " + t.getSeater()
-                    + ", AC: " + (t.isAcAvailable() ? "Yes" : "No")
-                    + ", Available: " + (t.isAvailable() ? "Yes" : "No"));
+        for (final Taxi taxi : taxis) {
+            final String driverName = taxi.getDriver() != null ? taxi.getDriver().getName() : "Not assigned";
+            final String driverPhone = taxi.getDriver() != null ? taxi.getDriver().getPhoneNo() : "N/A";
+            final double driverRating = taxi.getDriver() != null ? taxi.getDriver().getRating() : 0.0;
+
+            System.out.println("Taxi ID: " + taxi.getId()
+                    + ", Driver: " + driverName
+                    + ", Phone: " + driverPhone
+                    + ", Rating: " + driverRating
+                    + ", Seater: " + taxi.getSeater()
+                    + ", AC: " + (taxi.isAcAvailable() ? "Yes" : "No")
+                    + ", Available: " + (taxi.isAvailable() ? "Yes" : "No"));
         }
     }
 
     /** Book a taxi matching customer requirements */
     private void bookTaxi() {
         final Collection<Taxi> taxis = taxiController.get();
+
         System.out.print("Enter number of seats: ");
         final int seater = input.nextInt();
         input.nextLine();
@@ -125,18 +130,23 @@ public class CustomerMenu {
         }
 
         System.out.println("Available taxis:");
-        for (final Taxi t : filtered) {
-            System.out.println("Taxi ID: " + t.getId()
-                    + ", Driver: " + t.getDriver().getName()
-                    + ", Phone: " + t.getDriver().getPhoneNo()
-                    + ", Rating: " + t.getDriver().getRating()
-                    + ", Availability: " + (t.isAvailable() ? "Yes" : "No"));
+        for (final Taxi taxi : filtered) {
+            System.out.println("Taxi ID: " + taxi.getId()
+                    + ", Driver: " + taxi.getDriver().getName()
+                    + ", Phone: " + taxi.getDriver().getPhoneNo()
+                    + ", Rating: " + taxi.getDriver().getRating()
+                    + ", Availability: " + (taxi.isAvailable() ? "Yes" : "No"));
         }
 
         System.out.print("Enter Taxi ID to book: ");
         final int taxiId = input.nextInt();
         input.nextLine();
-        final Taxi selected = filtered.stream().filter(t -> t.getId() == taxiId).findFirst().orElse(null);
+
+        final Taxi selected = filtered.stream()
+                .filter(t -> t.getId() == taxiId)
+                .findFirst()
+                .orElse(null);
+
         if (selected == null) {
             System.out.println("Invalid Taxi ID.");
             return;
@@ -163,12 +173,12 @@ public class CustomerMenu {
             System.out.println("No bookings found.");
             return;
         }
-        for (final Booking b : bookings) {
-            System.out.println("Booking ID: " + b.getId()
-                    + ", Taxi ID: " + b.getTaxi().getId()
-                    + ", Driver: " + b.getTaxi().getDriver().getName()
-                    + ", Fare: ₹" + b.getFare()
-                    + ", Status: " + (b.isActive() ? "Active" : "Completed"));
+        for (final Booking booking : bookings) {
+            System.out.println("Booking ID: " + booking.getId()
+                    + ", Taxi ID: " + booking.getTaxi().getId()
+                    + ", Driver: " + booking.getTaxi().getDriver().getName()
+                    + ", Fare: ₹" + booking.getFare()
+                    + ", Status: " + (booking.isActive() ? "Active" : "Completed"));
         }
     }
 
@@ -181,7 +191,7 @@ public class CustomerMenu {
     }
 
     /** Rate driver for completed booking */
-    private void rate() {
+    private void rateDriver() {
         final Collection<Booking> bookings = bookingController.get(currentCustomer.getId());
         final Collection<Booking> completed = bookings.stream()
                 .filter(b -> !b.isActive())

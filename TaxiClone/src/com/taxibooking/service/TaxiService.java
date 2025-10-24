@@ -17,12 +17,12 @@ public interface TaxiService {
     void registerDemoTaxis();
 
     /** Adds a taxi to the system (method name kept as 'get' to preserve original logic). */
-    void get(Taxi taxi);
+    void get(final Taxi taxi);
 
     /**
      * Factory method to obtain a TaxiService instance.
      */
-    static TaxiService getInstance(Collection<Taxi> taxis) {
+    static TaxiService getInstance(final Collection<Taxi> taxis) {
         return TaxiServiceImpl.getInstance(taxis);
     }
 }

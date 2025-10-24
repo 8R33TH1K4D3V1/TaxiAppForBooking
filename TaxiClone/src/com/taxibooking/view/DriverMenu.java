@@ -27,14 +27,14 @@ public class DriverMenu {
     public DriverMenu(final TaxiService taxiService,
                       final BookingController bookingController,
                       final DriverController driverController) {
-        this.taxiController = new TaxiController(); // singleton TaxiController
+        this.taxiController = new TaxiController();
         this.bookingController = bookingController;
         this.driverController = driverController;
     }
 
     /** Main driver menu loop */
     public void run() {
-        login(); // Prompt driver login
+        login();
 
         int choice;
         do {
@@ -43,9 +43,9 @@ public class DriverMenu {
             input.nextLine();
 
             switch (choice) {
-                case 1 -> viewCurrentBookings(); // Show active bookings
-                case 2 -> editProfile();         // Edit driver profile
-                case 3 -> viewBookingHistory();  // Show all bookings
+                case 1 -> viewCurrentBookings();
+                case 2 -> editProfile();
+                case 3 -> viewBookingHistory();
                 case 0 -> System.out.println("Back to main menu...");
                 default -> System.out.println("Invalid choice!");
             }
@@ -62,7 +62,6 @@ public class DriverMenu {
         System.out.print("Enter choice: ");
     }
 
-    // ---------------- Login ----------------
     /** Prompt driver for ID and validate login */
     private void login() {
         System.out.print("Enter your Driver ID: ");
@@ -81,15 +80,14 @@ public class DriverMenu {
     /** Find a driver by ID by checking all registered taxis */
     private Driver get(final int id) {
         final Collection<Taxi> taxis = taxiController.get();
-        for (final Taxi t : taxis) {
-            if (t.getDriver() != null && t.getDriver().getId() == id) {
-                return t.getDriver();
+        for (final Taxi taxi : taxis) {
+            if (taxi.getDriver() != null && taxi.getDriver().getId() == id) {
+                return taxi.getDriver();
             }
         }
         return null;
     }
 
-    // ---------------- Edit Profile ----------------
     /** Edit driver's name and phone number */
     private void editProfile() {
         System.out.println("\n--- EDIT PROFILE ---");
@@ -104,25 +102,25 @@ public class DriverMenu {
         final String phone = input.nextLine();
         if (!phone.isEmpty()) currentDriver.setPhoneNo(phone);
 
-        driverController.update(currentDriver); // Save updates
+        driverController.update(currentDriver);
         System.out.println("Profile updated successfully!");
     }
 
-    // ---------------- Current Bookings ----------------
     /** Display all active bookings assigned to the driver */
     private void viewCurrentBookings() {
         System.out.println("\n--- YOUR CURRENT BOOKINGS ---");
         final Collection<Booking> allBookings = bookingController.get();
         boolean hasBooking = false;
 
-        for (final Booking b : allBookings) {
-            if (b.getTaxi().getDriver() != null && b.getTaxi().getDriver().getId() == currentDriver.getId() && b.isActive()) {
+        for (final Booking booking : allBookings) {
+            final Driver driver = booking.getTaxi().getDriver();
+            if (driver != null && driver.getId() == currentDriver.getId() && booking.isActive()) {
                 hasBooking = true;
-                System.out.println("Booking ID: " + b.getId()
-                        + ", Customer: " + b.getCustomer().getName()
-                        + ", Pickup: " + b.getPickupLocation()
-                        + ", Drop: " + b.getDropLocation()
-                        + ", Fare: ₹" + b.getFare()
+                System.out.println("Booking ID: " + booking.getId()
+                        + ", Customer: " + booking.getCustomer().getName()
+                        + ", Pickup: " + booking.getPickupLocation()
+                        + ", Drop: " + booking.getDropLocation()
+                        + ", Fare: ₹" + booking.getFare()
                         + ", Status: Active");
             }
         }
@@ -132,22 +130,22 @@ public class DriverMenu {
         }
     }
 
-    // ---------------- Booking History ----------------
     /** Display all bookings (active and completed) for the driver */
     private void viewBookingHistory() {
         System.out.println("\n--- YOUR BOOKING HISTORY ---");
         final Collection<Booking> allBookings = bookingController.get();
         boolean hasBooking = false;
 
-        for (final Booking b : allBookings) {
-            if (b.getTaxi().getDriver() != null && b.getTaxi().getDriver().getId() == currentDriver.getId()) {
+        for (final Booking booking : allBookings) {
+            final Driver driver = booking.getTaxi().getDriver();
+            if (driver != null && driver.getId() == currentDriver.getId()) {
                 hasBooking = true;
-                System.out.println("Booking ID: " + b.getId()
-                        + ", Customer: " + b.getCustomer().getName()
-                        + ", Pickup: " + b.getPickupLocation()
-                        + ", Drop: " + b.getDropLocation()
-                        + ", Fare: ₹" + b.getFare()
-                        + ", Status: " + (b.isActive() ? "Active" : "Completed"));
+                System.out.println("Booking ID: " + booking.getId()
+                        + ", Customer: " + booking.getCustomer().getName()
+                        + ", Pickup: " + booking.getPickupLocation()
+                        + ", Drop: " + booking.getDropLocation()
+                        + ", Fare: ₹" + booking.getFare()
+                        + ", Status: " + (booking.isActive() ? "Active" : "Completed"));
             }
         }
 
