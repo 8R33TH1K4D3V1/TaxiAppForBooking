@@ -7,50 +7,45 @@ import java.util.Collection;
 import java.util.ArrayList;
 
 /**
- * Controller class that manages Taxi operations.
- * Delegates logic to the TaxiService layer.
+ * Controller for Taxi operations.
+ * Delegates all logic to TaxiService and hides the service from other classes.
  */
 public class TaxiController {
 
     private final TaxiService taxiService;
+    private static TaxiController instance;
 
-    /**
-     * Constructor using singleton TaxiService.
-     */
-    public TaxiController() {
+    private TaxiController() {
         this.taxiService = TaxiService.getInstance(new ArrayList<>());
     }
 
-    /**
-     * Retrieves all taxis as a new list (to avoid external modifications).
-     */
-    public Collection<Taxi> get() {
-        return new ArrayList<>(taxiService.get());
+    public static TaxiController getInstance() {
+        if (instance == null) {
+            instance = new TaxiController();
+        }
+        return instance;
     }
 
-    /**
-     * Retrieves a taxi by its ID.
-     */
+    /** Get all taxis */
+    public Collection<Taxi> get() {
+        return taxiService.get();
+    }
+
+    /** Get a taxi by ID */
     public Taxi get(final int id) {
-        for (final Taxi taxi : get()) {
-            if (taxi.getId() == id) {
-                return taxi;
-            }
+        for (Taxi taxi : taxiService.get()) {
+            if (taxi.getId() == id) return taxi;
         }
         return null;
     }
 
-    /**
-     * Registers demo taxis through the service.
-     */
-    public void registerDemoTaxis() {
-        taxiService.registerDemoTaxis();
-    }
-
-    /**
-     * Adds a taxi via the service.
-     */
+    /** Add a taxi */
     public void get(final Taxi taxi) {
         taxiService.get(taxi);
+    }
+
+    /** Register demo taxis */
+    public void registerDemoTaxis() {
+        taxiService.registerDemoTaxis();
     }
 }

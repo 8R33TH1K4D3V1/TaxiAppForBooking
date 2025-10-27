@@ -2,6 +2,7 @@ package com.taxibooking.controller;
 
 import com.taxibooking.model.Driver;
 import com.taxibooking.service.DriverService;
+import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -9,26 +10,34 @@ import java.util.Collection;
  * Delegates all logic to DriverService.
  */
 public class DriverController {
-
     private final DriverService driverService;
+    private static DriverController instance;
 
-    /** Constructor injection of DriverService */
-    public DriverController(final DriverService driverService) {
-        this.driverService = driverService;
+    /** Private constructor to enforce Singleton pattern */
+    private DriverController() {
+        this.driverService = DriverService.getInstance(new ArrayList<>());
     }
 
-    /** Get a driver by ID */
+    /** Returns the single shared instance */
+    public static DriverController getInstance() {
+        if (instance == null) {
+            instance = new DriverController();
+        }
+        return instance;
+    }
+
+    /** Gets a driver by ID */
     public Driver get(final int driverId) {
         return driverService.get(driverId);
     }
 
-    /** Get all drivers */
-    public Collection<Driver> get() {
-        return driverService.get();
-    }
-
-    /** Update driver details */
+    /** Updates driver details */
     public void update(final Driver driver) {
         driverService.update(driver);
+    }
+
+    /** Returns all drivers */
+    public Collection<Driver> get() {
+        return driverService.get();
     }
 }

@@ -4,15 +4,14 @@ import com.taxibooking.model.Taxi;
 import java.util.Collection;
 
 /**
- * Implementation of TaxiRegistrationService.
- * Handles registering and unregistering taxis.
- * Hidden from outside access — package-private.
+ * Package-private implementation of TaxiRegistrationService.
+ * Hidden from external access.
  */
-final class TaxiRegistrationServiceImpl implements TaxiRegistrationService {
+class TaxiRegistrationServiceImpl implements TaxiRegistrationService {
 
     private final Collection<Taxi> taxis;
 
-    TaxiRegistrationServiceImpl(final Collection<Taxi> taxis) {
+    TaxiRegistrationServiceImpl(Collection<Taxi> taxis) {
         this.taxis = taxis;
     }
 
@@ -24,7 +23,7 @@ final class TaxiRegistrationServiceImpl implements TaxiRegistrationService {
 
     @Override
     public void unregister(final int id) {
-        final Taxi toRemove = taxis.stream()
+        Taxi toRemove = taxis.stream()
                 .filter(t -> t.getId() == id)
                 .findFirst()
                 .orElse(null);

@@ -2,18 +2,26 @@ package com.taxibooking.service;
 
 import com.taxibooking.model.Driver;
 import java.util.Collection;
+import java.util.ArrayList;
 
 /**
- * Implementation of DriverRegistrationService.
- * Handles registering and unregistering drivers.
- * Hidden from external access — package-private.
+ * Singleton implementation of DriverRegistrationService.
+ * Hidden from external classes.
  */
-final class DriverRegistrationServiceImpl implements DriverRegistrationService {
+class DriverRegistrationServiceImpl implements DriverRegistrationService {
 
     private final Collection<Driver> drivers;
+    private static DriverRegistrationService instance;
 
-    DriverRegistrationServiceImpl(final Collection<Driver> drivers) {
+    private DriverRegistrationServiceImpl(Collection<Driver> drivers) {
         this.drivers = drivers;
+    }
+
+    public static DriverRegistrationService getInstance(Collection<Driver> drivers) {
+        if (instance == null) {
+            instance = new DriverRegistrationServiceImpl(drivers);
+        }
+        return instance;
     }
 
     @Override
@@ -24,7 +32,7 @@ final class DriverRegistrationServiceImpl implements DriverRegistrationService {
 
     @Override
     public void unregister(final int id) {
-        final Driver found = drivers.stream()
+        Driver found = drivers.stream()
                 .filter(d -> d.getId() == id)
                 .findFirst()
                 .orElse(null);
@@ -36,4 +44,6 @@ final class DriverRegistrationServiceImpl implements DriverRegistrationService {
             System.out.println("Driver ID not found.");
         }
     }
+
+
 }

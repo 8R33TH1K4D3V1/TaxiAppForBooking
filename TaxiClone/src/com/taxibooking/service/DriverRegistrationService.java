@@ -4,19 +4,16 @@ import com.taxibooking.model.Driver;
 import java.util.Collection;
 
 /**
- * Service interface for driver registration operations.
- * Defines methods to register and unregister drivers.
+ * Service interface for Driver Registration operations.
  */
 public interface DriverRegistrationService {
 
-    /** Registers a new driver. */
     void register(final Driver driver);
 
-    /** Unregisters a driver by ID. */
     void unregister(final int id);
 
-    /** Factory method to get a DriverRegistrationService instance. */
-    static DriverRegistrationService getInstance(final Collection<Driver> drivers) {
-        return new DriverRegistrationServiceImpl(drivers);
+    /** Factory method to get singleton instance */
+    static DriverRegistrationService getInstance(Collection<Driver> drivers) {
+        return DriverRegistrationServiceImpl.getInstance(drivers);
     }
 }

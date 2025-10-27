@@ -1,19 +1,14 @@
 package com.taxibooking.view;
 
-import com.taxibooking.controller.DriverController;
-import com.taxibooking.controller.BookingController;
-import com.taxibooking.controller.TaxiController;
-import com.taxibooking.model.Driver;
-import com.taxibooking.model.Taxi;
-import com.taxibooking.model.Booking;
-import com.taxibooking.service.TaxiService;
+import com.taxibooking.controller.*;
+import com.taxibooking.model.*;
 
 import java.util.Collection;
 import java.util.Scanner;
 
 /**
- * Driver menu for managing driver actions.
- * Supports viewing current bookings, editing profile, and booking history.
+ * View class for managing driver-related actions.
+ * Provides login, profile editing, and booking viewing features.
  */
 public class DriverMenu {
 
@@ -21,20 +16,23 @@ public class DriverMenu {
     private final TaxiController taxiController;
     private final BookingController bookingController;
     private final DriverController driverController;
-    private Driver currentDriver;
 
-    /** Constructor with required controllers */
-    public DriverMenu(final TaxiService taxiService,
-                      final BookingController bookingController,
+    /**
+     * Constructs DriverMenu with required controllers.
+     */
+    public DriverMenu(final BookingController bookingController,
                       final DriverController driverController) {
-        this.taxiController = new TaxiController();
+        this.taxiController = TaxiController.getInstance();
         this.bookingController = bookingController;
         this.driverController = driverController;
     }
 
-    /** Main driver menu loop */
+    /** Runs the driver menu loop. */
     public void run() {
-        login();
+        Driver currentDriver = login();
+        if (currentDriver == null) {
+            return;
+        }
 
         int choice;
         do {
@@ -43,16 +41,16 @@ public class DriverMenu {
             input.nextLine();
 
             switch (choice) {
-                case 1 -> viewCurrentBookings();
-                case 2 -> editProfile();
-                case 3 -> viewBookingHistory();
+                case 1 -> viewCurrentBookings(currentDriver);
+                case 2 -> editProfile(currentDriver);
+                case 3 -> viewBookingHistory(currentDriver);
                 case 0 -> System.out.println("Back to main menu...");
                 default -> System.out.println("Invalid choice!");
             }
         } while (choice != 0);
     }
 
-    /** Display driver menu options */
+    /** Displays driver menu options. */
     private void menu() {
         System.out.println("\n--- DRIVER MENU ---");
         System.out.println("1. Current Booking");
@@ -62,24 +60,27 @@ public class DriverMenu {
         System.out.print("Enter choice: ");
     }
 
-    /** Prompt driver for ID and validate login */
-    private void login() {
+    /** Handles driver login using driver ID. */
+    private Driver login() {
         System.out.print("Enter your Driver ID: ");
         final int driverId = input.nextInt();
         input.nextLine();
-        currentDriver = get(driverId);
 
-        if (currentDriver == null) {
-            System.out.println("Driver ID not found. Exiting.");
-            System.exit(0);
+        Driver driver = get(driverId);
+
+        if (driver == null) {
+            System.out.println("Driver ID not found. Returning to main menu...");
+            return null;
         }
 
-        System.out.println("Welcome, " + currentDriver.getName() + "!");
+        System.out.println("Welcome, " + driver.getName() + "!");
+        return driver;
     }
 
-    /** Find a driver by ID by checking all registered taxis */
+    /** Retrieves driver by ID from registered taxis. */
     private Driver get(final int id) {
         final Collection<Taxi> taxis = taxiController.get();
+
         for (final Taxi taxi : taxis) {
             if (taxi.getDriver() != null && taxi.getDriver().getId() == id) {
                 return taxi.getDriver();
@@ -88,33 +89,38 @@ public class DriverMenu {
         return null;
     }
 
-    /** Edit driver's name and phone number */
-    private void editProfile() {
+    /** Allows driver to edit profile details. */
+    private void editProfile(final Driver driver) {
         System.out.println("\n--- EDIT PROFILE ---");
-
-        System.out.println("Current Name: " + currentDriver.getName());
+        System.out.println("Current Name: " + driver.getName());
         System.out.print("Enter new name (or press Enter to keep current): ");
         final String name = input.nextLine();
-        if (!name.isEmpty()) currentDriver.setName(name);
 
-        System.out.println("Current Phone: " + currentDriver.getPhoneNo());
+        if (!name.isEmpty()) {
+            driver.setName(name);
+        }
+
+        System.out.println("Current Phone: " + driver.getPhoneNo());
         System.out.print("Enter new phone number (or press Enter to keep current): ");
         final String phone = input.nextLine();
-        if (!phone.isEmpty()) currentDriver.setPhoneNo(phone);
 
-        driverController.update(currentDriver);
+        if (!phone.isEmpty()) {
+            driver.setPhoneNo(phone);
+        }
+
+        driverController.update(driver);
         System.out.println("Profile updated successfully!");
     }
 
-    /** Display all active bookings assigned to the driver */
-    private void viewCurrentBookings() {
+    /** Displays all active bookings assigned to this driver. */
+    private void viewCurrentBookings(final Driver driver) {
         System.out.println("\n--- YOUR CURRENT BOOKINGS ---");
         final Collection<Booking> allBookings = bookingController.get();
         boolean hasBooking = false;
 
         for (final Booking booking : allBookings) {
-            final Driver driver = booking.getTaxi().getDriver();
-            if (driver != null && driver.getId() == currentDriver.getId() && booking.isActive()) {
+            final Driver assignedDriver = booking.getTaxi().getDriver();
+            if (assignedDriver != null && assignedDriver.getId() == driver.getId() && booking.isActive()) {
                 hasBooking = true;
                 System.out.println("Booking ID: " + booking.getId()
                         + ", Customer: " + booking.getCustomer().getName()
@@ -130,15 +136,15 @@ public class DriverMenu {
         }
     }
 
-    /** Display all bookings (active and completed) for the driver */
-    private void viewBookingHistory() {
+    /** Displays booking history (active and completed). */
+    private void viewBookingHistory(final Driver driver) {
         System.out.println("\n--- YOUR BOOKING HISTORY ---");
         final Collection<Booking> allBookings = bookingController.get();
         boolean hasBooking = false;
 
         for (final Booking booking : allBookings) {
-            final Driver driver = booking.getTaxi().getDriver();
-            if (driver != null && driver.getId() == currentDriver.getId()) {
+            final Driver assignedDriver = booking.getTaxi().getDriver();
+            if (assignedDriver != null && assignedDriver.getId() == driver.getId()) {
                 hasBooking = true;
                 System.out.println("Booking ID: " + booking.getId()
                         + ", Customer: " + booking.getCustomer().getName()

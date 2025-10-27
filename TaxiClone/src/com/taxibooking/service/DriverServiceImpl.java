@@ -3,16 +3,20 @@ package com.taxibooking.service;
 import com.taxibooking.model.Driver;
 import java.util.Collection;
 
+/**
+ * Singleton implementation of DriverService.
+ */
 class DriverServiceImpl implements DriverService {
 
     private final Collection<Driver> drivers;
     private static DriverService instance;
 
-    private DriverServiceImpl(final Collection<Driver> drivers) {
+    private DriverServiceImpl(Collection<Driver> drivers) {
         this.drivers = drivers;
     }
 
-    public static DriverService getInstance(final Collection<Driver> drivers) {
+    /** Singleton instance access */
+    public static DriverService getInstance(Collection<Driver> drivers) {
         if (instance == null) {
             instance = new DriverServiceImpl(drivers);
         }
@@ -21,7 +25,7 @@ class DriverServiceImpl implements DriverService {
 
     @Override
     public void update(final Driver updatedDriver) {
-        final Driver existingDriver = get(updatedDriver.getId());
+        Driver existingDriver = get(updatedDriver.getId());
         if (existingDriver != null) {
             drivers.remove(existingDriver);
             drivers.add(updatedDriver);
