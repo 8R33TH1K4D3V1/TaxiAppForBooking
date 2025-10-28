@@ -2,8 +2,7 @@ package com.taxibooking.controller;
 
 import com.taxibooking.model.Taxi;
 import com.taxibooking.service.TaxiRegistrationService;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Objects;
 
 /**
  * Controller for Taxi Registration.
@@ -16,12 +15,13 @@ public class TaxiRegistrationController {
 
     /** Private constructor hides service */
     private TaxiRegistrationController() {
-        this.service = TaxiRegistrationService.getInstance(new ArrayList<>());
+        this.service = TaxiRegistrationService.getInstance();
     }
 
     /** Singleton access */
     public static TaxiRegistrationController getInstance() {
-        if (instance == null) {
+
+        if (Objects.isNull(instance)) {
             instance = new TaxiRegistrationController();
         }
         return instance;
@@ -37,8 +37,5 @@ public class TaxiRegistrationController {
         service.unregister(id);
     }
 
-    /** Get all taxis */
-    public Collection<Taxi> get() {
-        return service.get();
-    }
+
 }

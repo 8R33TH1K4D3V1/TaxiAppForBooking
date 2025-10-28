@@ -3,12 +3,10 @@ package com.taxibooking.service;
 import com.taxibooking.model.Driver;
 import java.util.Collection;
 
-/**
- * Service interface for managing drivers.
- */
+/** Handles driver data operations */
 public interface DriverService {
 
-    /** Update an existing driver */
+    /** Update driver info */
     void update(final Driver driver);
 
     /** Get driver by ID */
@@ -17,8 +15,8 @@ public interface DriverService {
     /** Get all drivers */
     Collection<Driver> get();
 
-    /** Factory method to get singleton instance */
-    static DriverService getInstance(Collection<Driver> drivers) {
-        return DriverServiceImpl.getInstance(drivers);
+    /** Singleton access */
+    static DriverService getInstance() {
+        return DriverServiceImpl.getInstance();
     }
 }

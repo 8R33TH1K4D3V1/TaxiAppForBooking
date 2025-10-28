@@ -2,7 +2,7 @@ package com.taxibooking.model;
 
 /**
  * Represents a driver in the taxi booking system.
- * Stores id, name, phone number, and rating.
+ * Stores driver details like ID, name, phone number, and rating.
  */
 public class Driver {
 
@@ -11,17 +11,8 @@ public class Driver {
     private double rating;
     private String name;
 
+    /** Default constructor */
     public Driver() {}
-
-    /**
-     * Full constructor to create a driver with all details.
-     */
-    public Driver(final int id, final String phoneNo, final double rating, final String name) {
-        this.id = id;
-        this.phoneNo = phoneNo;
-        this.rating = rating;
-        this.name = name;
-    }
 
     /** Getters */
     public int getId() {
@@ -41,19 +32,19 @@ public class Driver {
     }
 
     /** Setters */
-    public void setId(final int id) {
+    public void setId(int id) {
         this.id = id;
     }
 
-    public void setName(final String name) {
+    public void setName(String name) {
         this.name = name;
     }
 
-    public void setRating(final double rating) {
+    public void setRating(double rating) {
         this.rating = rating;
     }
 
-    public void setPhoneNo(final String phoneNo) {
+    public void setPhoneNo(String phoneNo) {
         this.phoneNo = phoneNo;
     }
 }

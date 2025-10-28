@@ -4,11 +4,11 @@ import com.taxibooking.model.Taxi;
 import com.taxibooking.service.TaxiService;
 
 import java.util.Collection;
-import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  * Controller for Taxi operations.
- * Delegates all logic to TaxiService and hides the service from other classes.
+ * Delegates logic to TaxiService and hides service details.
  */
 public class TaxiController {
 
@@ -16,33 +16,27 @@ public class TaxiController {
     private static TaxiController instance;
 
     private TaxiController() {
-        this.taxiService = TaxiService.getInstance(new ArrayList<>());
+        this.taxiService = TaxiService.getInstance();
     }
 
     public static TaxiController getInstance() {
-        if (instance == null) {
+
+        if (Objects.isNull(instance)) {
             instance = new TaxiController();
         }
         return instance;
     }
 
-    /** Get all taxis */
+    /** Get all taxis*/
     public Collection<Taxi> get() {
         return taxiService.get();
     }
 
-    /** Get a taxi by ID */
+    /** Get taxi by ID */
     public Taxi get(final int id) {
-        for (Taxi taxi : taxiService.get()) {
-            if (taxi.getId() == id) return taxi;
-        }
-        return null;
+        return taxiService.get(id);
     }
 
-    /** Add a taxi */
-    public void get(final Taxi taxi) {
-        taxiService.get(taxi);
-    }
 
     /** Register demo taxis */
     public void registerDemoTaxis() {

@@ -6,17 +6,18 @@ import java.util.Collection;
 /** Service interface for Taxi operations. */
 public interface TaxiService {
 
-    /** Returns all taxis. */
+    /** Returns all taxis (read-only). */
     Collection<Taxi> get();
+
+    /** Get a single taxi by ID. */
+    Taxi get(int id);
+
 
     /** Registers demo taxis. */
     void registerDemoTaxis();
 
-    /** Gets details of a taxi. */
-    void get(final Taxi taxi);
-
     /** Returns singleton instance. */
-    static TaxiService getInstance(Collection<Taxi> taxis) {
-        return TaxiServiceImpl.getInstance(taxis);
+    static TaxiService getInstance() {
+        return TaxiServiceImpl.getInstance();
     }
 }

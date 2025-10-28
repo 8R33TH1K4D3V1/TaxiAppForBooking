@@ -1,8 +1,6 @@
 package com.taxibooking.controller;
 
 import com.taxibooking.model.Booking;
-import com.taxibooking.model.Taxi;
-import com.taxibooking.model.Customer;
 import com.taxibooking.service.BookingService;
 import java.util.Collection;
 
@@ -14,9 +12,9 @@ public class BookingController {
 
     private final BookingService bookingService = BookingService.getInstance();
 
-    /** Book a taxi for a customer */
-    public void book(final Taxi taxi, final Customer customer, final String pickup, final String drop, final double fare) {
-        bookingService.book(taxi, customer, pickup, drop, fare);
+    /** Book a taxi using a Booking object */
+    public void book(final Booking booking) {
+        bookingService.book(booking);
     }
 
     /** Get all bookings */

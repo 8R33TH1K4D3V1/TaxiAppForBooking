@@ -13,11 +13,13 @@ class FareServiceImpl implements FareService {
     @Override
     public double calculate(final double distance, final boolean ac, final int seater) {
         final double rate = ac ? AC_RATE_PER_KM : NON_AC_RATE_PER_KM;
+
         final double seaterMultiplier = switch (seater) {
             case 6 -> 1.3;
             case 8 -> 1.6;
             default -> 1.0;
         };
+
         return (BASE_FARE + (distance * rate)) * seaterMultiplier;
     }
 }

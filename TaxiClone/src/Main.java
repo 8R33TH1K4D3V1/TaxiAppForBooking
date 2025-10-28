@@ -1,6 +1,14 @@
-import com.taxibooking.controller.*;
-import com.taxibooking.service.*;
-import com.taxibooking.view.*;
+import com.taxibooking.controller.BookingController;
+import com.taxibooking.controller.DriverController;
+import com.taxibooking.controller.DriverRegistrationController;
+import com.taxibooking.controller.TaxiController;
+import com.taxibooking.controller.TaxiRegistrationController;
+
+import com.taxibooking.view.AdminMenu;
+import com.taxibooking.view.CustomerMenu;
+import com.taxibooking.view.DriverMenu;
+import com.taxibooking.view.MainMenu;
+
 
 public final class Main {
 

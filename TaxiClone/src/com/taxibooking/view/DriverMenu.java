@@ -1,10 +1,17 @@
 package com.taxibooking.view;
 
-import com.taxibooking.controller.*;
-import com.taxibooking.model.*;
+import com.taxibooking.controller.BookingController;
+import com.taxibooking.controller.DriverController;
+import com.taxibooking.controller.TaxiController;
+
+import com.taxibooking.model.Booking;
+import com.taxibooking.model.Driver;
+import com.taxibooking.model.Taxi;
 
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Scanner;
+
 
 /**
  * View class for managing driver-related actions.
@@ -22,6 +29,7 @@ public class DriverMenu {
      */
     public DriverMenu(final BookingController bookingController,
                       final DriverController driverController) {
+
         this.taxiController = TaxiController.getInstance();
         this.bookingController = bookingController;
         this.driverController = driverController;
@@ -30,7 +38,8 @@ public class DriverMenu {
     /** Runs the driver menu loop. */
     public void run() {
         Driver currentDriver = login();
-        if (currentDriver == null) {
+
+        if (Objects.isNull(currentDriver)) {
             return;
         }
 
@@ -64,11 +73,12 @@ public class DriverMenu {
     private Driver login() {
         System.out.print("Enter your Driver ID: ");
         final int driverId = input.nextInt();
+
         input.nextLine();
 
         Driver driver = get(driverId);
 
-        if (driver == null) {
+        if (Objects.isNull(driver)) {
             System.out.println("Driver ID not found. Returning to main menu...");
             return null;
         }
@@ -82,8 +92,10 @@ public class DriverMenu {
         final Collection<Taxi> taxis = taxiController.get();
 
         for (final Taxi taxi : taxis) {
-            if (taxi.getDriver() != null && taxi.getDriver().getId() == id) {
-                return taxi.getDriver();
+            final Driver assignedDriver = taxi.getDriver();
+
+            if (Objects.nonNull(assignedDriver) && assignedDriver.getId() == id) {
+                return assignedDriver;
             }
         }
         return null;
@@ -109,6 +121,7 @@ public class DriverMenu {
         }
 
         driverController.update(driver);
+
         System.out.println("Profile updated successfully!");
     }
 
@@ -120,14 +133,21 @@ public class DriverMenu {
 
         for (final Booking booking : allBookings) {
             final Driver assignedDriver = booking.getTaxi().getDriver();
-            if (assignedDriver != null && assignedDriver.getId() == driver.getId() && booking.isActive()) {
+
+            if (Objects.nonNull(assignedDriver)
+                    && assignedDriver.getId() == driver.getId()
+                    && booking.isActive()) {
                 hasBooking = true;
-                System.out.println("Booking ID: " + booking.getId()
-                        + ", Customer: " + booking.getCustomer().getName()
-                        + ", Pickup: " + booking.getPickupLocation()
-                        + ", Drop: " + booking.getDropLocation()
-                        + ", Fare: ₹" + booking.getFare()
-                        + ", Status: Active");
+
+                StringBuilder bookingInfo = new StringBuilder();
+                bookingInfo.append("Booking ID: ").append(booking.getId())
+                        .append(", Customer: ").append(booking.getCustomer().getName())
+                        .append(", Pickup: ").append(booking.getPickupLocation())
+                        .append(", Drop: ").append(booking.getDropLocation())
+                        .append(", Fare: ₹").append(booking.getFare())
+                        .append(", Status: Active");
+
+                System.out.println(bookingInfo);
             }
         }
 
@@ -144,14 +164,20 @@ public class DriverMenu {
 
         for (final Booking booking : allBookings) {
             final Driver assignedDriver = booking.getTaxi().getDriver();
-            if (assignedDriver != null && assignedDriver.getId() == driver.getId()) {
+
+            if (Objects.nonNull(assignedDriver)
+                    && assignedDriver.getId() == driver.getId()) {
                 hasBooking = true;
-                System.out.println("Booking ID: " + booking.getId()
-                        + ", Customer: " + booking.getCustomer().getName()
-                        + ", Pickup: " + booking.getPickupLocation()
-                        + ", Drop: " + booking.getDropLocation()
-                        + ", Fare: ₹" + booking.getFare()
-                        + ", Status: " + (booking.isActive() ? "Active" : "Completed"));
+                StringBuilder bookingInfo = new StringBuilder();
+
+                bookingInfo.append("Booking ID: ").append(booking.getId())
+                        .append(", Customer: ").append(booking.getCustomer().getName())
+                        .append(", Pickup: ").append(booking.getPickupLocation())
+                        .append(", Drop: ").append(booking.getDropLocation())
+                        .append(", Fare: ₹").append(booking.getFare())
+                        .append(", Status: ").append(booking.isActive() ? "Active" : "Completed");
+
+                System.out.println(bookingInfo);
             }
         }
 

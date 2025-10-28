@@ -2,24 +2,27 @@ package com.taxibooking.service;
 
 import com.taxibooking.model.Driver;
 import java.util.Collection;
-import java.util.ArrayList;
+import java.util.Objects;
 
 /**
- * Singleton implementation of DriverRegistrationService.
- * Hidden from external classes.
+ * Package-private implementation of DriverRegistrationService.
+ * Hidden from external access.
  */
 class DriverRegistrationServiceImpl implements DriverRegistrationService {
 
+    private static DriverRegistrationServiceImpl instance;
     private final Collection<Driver> drivers;
-    private static DriverRegistrationService instance;
 
-    private DriverRegistrationServiceImpl(Collection<Driver> drivers) {
-        this.drivers = drivers;
+    /** Private constructor — only accessible through getInstance() */
+    private DriverRegistrationServiceImpl() {
+        this.drivers = DriverService.getInstance().get();
     }
 
-    public static DriverRegistrationService getInstance(Collection<Driver> drivers) {
-        if (instance == null) {
-            instance = new DriverRegistrationServiceImpl(drivers);
+    /** Singleton access — called from interface factory method */
+    static DriverRegistrationServiceImpl getInstance() {
+
+        if (Objects.isNull(instance)) {
+            instance = new DriverRegistrationServiceImpl();
         }
         return instance;
     }
@@ -27,23 +30,18 @@ class DriverRegistrationServiceImpl implements DriverRegistrationService {
     @Override
     public void register(final Driver driver) {
         drivers.add(driver);
+
         System.out.println("Driver registered successfully: " + driver.getName());
     }
 
     @Override
-    public void unregister(final int id) {
-        Driver found = drivers.stream()
-                .filter(d -> d.getId() == id)
-                .findFirst()
-                .orElse(null);
+    public void unregister(final int driverId) {
+        boolean removed = drivers.removeIf(driver -> driver.getId() == driverId);
 
-        if (found != null) {
-            drivers.remove(found);
-            System.out.println("Driver removed successfully: " + found.getName());
+        if (removed) {
+            System.out.println("Driver with ID " + driverId + " unregistered successfully.");
         } else {
             System.out.println("Driver ID not found.");
         }
     }
-
-
 }

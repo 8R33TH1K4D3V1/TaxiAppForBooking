@@ -6,21 +6,26 @@ package com.taxibooking.model;
 public class Customer {
 
     private int id;
-    private final String name;
+    private String name;
 
-    /** Constructor to create a customer with id and name. */
-    public Customer(final int id, final String name) {
-        this.id = id;
-        this.name = name;
-    }
+    /** Default constructor */
+    public Customer() {}
 
     /** Getters */
-    public int getId() { return id; }
+    public int getId() {
+        return id;
+    }
 
-    public String getName() { return name; }
+    public String getName() {
+        return name;
+    }
 
-    /** Setter*/
-    public void setId(final int id) {
+    /** Setters */
+    public void setId(int id) {
         this.id = id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

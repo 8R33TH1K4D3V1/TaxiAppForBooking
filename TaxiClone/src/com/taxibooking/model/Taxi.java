@@ -2,41 +2,58 @@ package com.taxibooking.model;
 
 /**
  * Represents a taxi in the taxi booking system.
- * Stores id, assigned driver, seater count, AC availability, and current availability.
+ * Stores ID, assigned driver, seater count, AC availability, and current availability.
  */
 public class Taxi {
 
     private int id;
     private Driver driver;
-    private final int seater;
-    private final boolean isAcAvailable;
+    private int seater;
+    private boolean isAcAvailable;
     private boolean isAvailable;
 
-    /** Constructor to create a taxi with all details. */
-    public Taxi(final int id, final Driver driver, final int seater,
-                final boolean isAcAvailable, final boolean isAvailable) {
-        this.id = id;
-        this.driver = driver;
-        this.seater = seater;
-        this.isAcAvailable = isAcAvailable;
-        this.isAvailable = isAvailable;
-    }
+    /** Default constructor */
+    public Taxi() {}
 
     /** Getters */
-    public int getId() { return id; }
+    public int getId() {
+        return id;
+    }
 
-    public Driver getDriver() { return driver; }
+    public Driver getDriver() {
+        return driver;
+    }
 
-    public int getSeater() { return seater; }
+    public int getSeater() {
+        return seater;
+    }
 
-    public boolean isAcAvailable() { return isAcAvailable; }
+    public boolean isAcAvailable() {
+        return isAcAvailable;
+    }
 
-    public boolean isAvailable() { return isAvailable; }
+    public boolean isAvailable() {
+        return isAvailable;
+    }
 
     /** Setters */
-    public void setId(final int id) { this.id = id; }
+    public void setId(int id) {
+        this.id = id;
+    }
 
-    public void setDriver(final Driver driver) { this.driver = driver; }
+    public void setDriver(Driver driver) {
+        this.driver = driver;
+    }
 
-    public void setAvailable(final boolean available) { this.isAvailable = available; }
+    public void setSeater(int seater) {
+        this.seater = seater;
+    }
+
+    public void setAcAvailable(boolean acAvailable) {
+        this.isAcAvailable = acAvailable;
+    }
+
+    public void setAvailable(boolean available) {
+        this.isAvailable = available;
+    }
 }

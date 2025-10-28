@@ -3,45 +3,109 @@ package com.taxibooking.service;
 import com.taxibooking.model.Taxi;
 import com.taxibooking.model.Driver;
 
+import java.util.ArrayList;
 import java.util.Collection;
-
+import java.util.Objects;
 
 /**
  * Singleton implementation of TaxiService.
+ * Restricts direct modification of the taxi list.
  */
 class TaxiServiceImpl implements TaxiService {
 
-    private final Collection<Taxi> taxis;
-    private static TaxiService instance;
+    private final Collection<Taxi> taxis = new ArrayList<>();
+    private static TaxiServiceImpl instance;
 
-    private TaxiServiceImpl(Collection<Taxi> taxis) {
-        this.taxis = taxis;
-    }
+    private TaxiServiceImpl() { }
 
-    public static TaxiService getInstance(Collection<Taxi> taxis) {
-        if (instance == null) {
-            instance = new TaxiServiceImpl(taxis);
+    /** Singleton instance accessor */
+    public static TaxiServiceImpl getInstance() {
+
+        if (Objects.isNull(instance)) {
+            instance = new TaxiServiceImpl();
         }
         return instance;
     }
+
 
     @Override
     public Collection<Taxi> get() {
         return taxis;
     }
 
+
+    /** Get taxi by ID */
     @Override
-    public void registerDemoTaxis() {
-        taxis.add(new Taxi(1, new Driver(101, "7373771722", 4.5, "Ramesh"), 4, true, true));
-        taxis.add(new Taxi(2, new Driver(102, "8484998446", 4.7, "Nick"), 6, false, true));
-        taxis.add(new Taxi(3, new Driver(103, "9442371722", 4.2, "Mike"), 4, true, true));
-        taxis.add(new Taxi(4, new Driver(104, "9443701100", 4.8, "Danny"), 4, false, true));
-        taxis.add(new Taxi(5, new Driver(105, "9988776655", 4.3, "John"), 6, true, true));
-        taxis.add(new Taxi(6, new Driver(106, "6787678790", 4.6, "Ram"), 4, false, true));
+    public Taxi get(final int id) {
+
+        for (Taxi taxi : taxis) {
+
+            if (taxi.getId() == id) {
+                return taxi;
+            }
+        }
+
+        return null;
     }
 
+    /** Keep registerDemoTaxis unchanged */
     @Override
-    public void get(final Taxi taxi) {
-        taxis.add(taxi);
+    public void registerDemoTaxis() {
+
+        Driver d1 = new Driver();
+        d1.setId(101);
+        d1.setName("Ramesh");
+        d1.setPhoneNo("7373771722");
+        d1.setRating(4.5);
+
+        Taxi t1 = new Taxi();
+        t1.setId(1);
+        t1.setDriver(d1);
+        t1.setSeater(4);
+        t1.setAcAvailable(true);
+        t1.setAvailable(true);
+        taxis.add(t1);
+
+        Driver d2 = new Driver();
+        d2.setId(102);
+        d2.setName("Nick");
+        d2.setPhoneNo("8484998446");
+        d2.setRating(4.7);
+
+        Taxi t2 = new Taxi();
+        t2.setId(2);
+        t2.setDriver(d2);
+        t2.setSeater(6);
+        t2.setAcAvailable(true);
+        t2.setAvailable(true);
+        taxis.add(t2);
+
+        Driver d3 = new Driver();
+        d3.setId(103);
+        d3.setName("Mike");
+        d3.setPhoneNo("9442371722");
+        d3.setRating(4.2);
+
+        Taxi t3 = new Taxi();
+        t3.setId(3);
+        t3.setDriver(d3);
+        t3.setSeater(6);
+        t3.setAcAvailable(false);
+        t3.setAvailable(true);
+        taxis.add(t3);
+
+        Driver d4 = new Driver();
+        d4.setId(104);
+        d4.setName("Danny");
+        d4.setPhoneNo("9443701100");
+        d4.setRating(4.8);
+
+        Taxi t4 = new Taxi();
+        t4.setId(4);
+        t4.setDriver(d4);
+        t4.setSeater(4);
+        t4.setAcAvailable(false);
+        t4.setAvailable(true);
+        taxis.add(t4);
     }
 }
