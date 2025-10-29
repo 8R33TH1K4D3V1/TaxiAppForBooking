@@ -5,36 +5,32 @@ import com.taxibooking.model.Driver;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Objects;
 
 /**
- * Singleton implementation of TaxiService.
- * Restricts direct modification of the taxi list.
+ * Singleton implementation of TaxiService
+ * Uses internal static class (Bill Pugh pattern)
  */
-class TaxiServiceImpl implements TaxiService {
+public class TaxiServiceImpl implements TaxiService {
 
     private final Collection<Taxi> taxis = new ArrayList<>();
-    private static TaxiServiceImpl instance;
 
     private TaxiServiceImpl() { }
 
-    /** Singleton instance accessor */
-    public static TaxiServiceImpl getInstance() {
-
-        if (Objects.isNull(instance)) {
-            instance = new TaxiServiceImpl();
-        }
-        return instance;
+    /** Internal static class for singleton instance */
+    private static final class Instance {
+        private static final TaxiServiceImpl SERVICE = new TaxiServiceImpl();
     }
 
+    /** Returns singleton instance */
+    public static TaxiServiceImpl getInstance() {
+        return Instance.SERVICE;
+    }
 
     @Override
     public Collection<Taxi> get() {
         return taxis;
     }
 
-
-    /** Get taxi by ID */
     @Override
     public Taxi get(final int id) {
 
@@ -44,14 +40,11 @@ class TaxiServiceImpl implements TaxiService {
                 return taxi;
             }
         }
-
         return null;
     }
 
-    /** Keep registerDemoTaxis unchanged */
     @Override
     public void registerDemoTaxis() {
-
         Driver d1 = new Driver();
         d1.setId(101);
         d1.setName("Ramesh");

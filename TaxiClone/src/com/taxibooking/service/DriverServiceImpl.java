@@ -6,30 +6,30 @@ import java.util.Collection;
 import java.util.Objects;
 
 /**
- * Singleton implementation of DriverService.
+ * Singleton implementation of DriverService using internal static class.
  */
-class DriverServiceImpl implements DriverService {
+public class DriverServiceImpl implements DriverService {
 
     private final Collection<Driver> driverList = new ArrayList<>();
-    private static DriverService instance;
 
+    /** Private constructor */
     private DriverServiceImpl() {}
 
-    /** Singleton instance — no parameters */
-    public static DriverService getInstance() {
-
-        if (Objects.isNull(instance)) {
-            instance = new DriverServiceImpl();
-        }
-        return instance;
+    /** Internal static class for singleton instance */
+    private static final class Instance {
+        private static final DriverServiceImpl SERVICE = new DriverServiceImpl();
     }
 
+    /** Returns singleton instance */
+    public static DriverServiceImpl getInstance() {
+        return Instance.SERVICE;
+    }
 
     /** Update driver details */
     @Override
     public void update(final Driver updatedDriver) {
 
-        if (Objects.isNull(updatedDriver)){
+        if (Objects.isNull(updatedDriver)) {
             return;
         }
 
@@ -37,8 +37,8 @@ class DriverServiceImpl implements DriverService {
 
         if (Objects.nonNull(existingDriver)) {
             driverList.remove(existingDriver);
-            driverList.add(updatedDriver);
         }
+        driverList.add(updatedDriver);
     }
 
     /** Get driver by ID */
@@ -50,9 +50,9 @@ class DriverServiceImpl implements DriverService {
                 .orElse(null);
     }
 
+    /** Get all drivers */
     @Override
     public Collection<Driver> get() {
         return driverList;
     }
-
 }

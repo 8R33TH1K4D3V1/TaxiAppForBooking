@@ -11,8 +11,4 @@ public interface DriverRegistrationService {
     /** Unregister a driver by ID */
     void unregister(final int id);
 
-    /** Returns Singleton instance */
-    static DriverRegistrationService getInstance() {
-        return DriverRegistrationServiceImpl.getInstance();
-    }
 }

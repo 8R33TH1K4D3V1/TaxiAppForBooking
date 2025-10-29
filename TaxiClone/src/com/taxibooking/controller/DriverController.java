@@ -1,28 +1,27 @@
 package com.taxibooking.controller;
 
 import com.taxibooking.model.Driver;
-import com.taxibooking.service.DriverService;
+import com.taxibooking.service.DriverServiceImpl;
 import java.util.Collection;
-import java.util.Objects;
 
 /** Handles driver-related actions */
 public class DriverController {
 
-    private final DriverService driverService;
-    private static DriverController instance;
+    private final DriverServiceImpl driverService;
 
     /** Private constructor */
     private DriverController() {
-        this.driverService = DriverService.getInstance();
+        this.driverService = DriverServiceImpl.getInstance();
     }
 
-    /** Singleton access */
-    public static DriverController getInstance() {
+    /** Internal static class for singleton instance */
+    private static final class Instance {
+        private static final DriverController CONTROLLER = new DriverController();
+    }
 
-        if (Objects.isNull(instance)) {
-            instance = new DriverController();
-        }
-        return instance;
+    /** Returns singleton instance */
+    public static DriverController getInstance() {
+        return Instance.CONTROLLER;
     }
 
     /** Get driver by ID */
@@ -40,6 +39,3 @@ public class DriverController {
         return driverService.get();
     }
 }
-
-
-

@@ -11,8 +11,4 @@ public interface TaxiRegistrationService {
     /** Remove taxi by ID */
     void unregister(final int id);
 
-    /** Singleton access */
-    static TaxiRegistrationService getInstance() {
-        return TaxiRegistrationServiceImpl.getInstance();
-    }
 }

@@ -16,8 +16,4 @@ public interface TaxiService {
     /** Registers demo taxis. */
     void registerDemoTaxis();
 
-    /** Returns singleton instance. */
-    static TaxiService getInstance() {
-        return TaxiServiceImpl.getInstance();
-    }
 }

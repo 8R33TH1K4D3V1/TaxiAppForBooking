@@ -1,44 +1,40 @@
 package com.taxibooking.controller;
 
 import com.taxibooking.model.Taxi;
-import com.taxibooking.service.TaxiService;
-
+import com.taxibooking.service.TaxiServiceImpl;
 import java.util.Collection;
-import java.util.Objects;
 
-/**
- * Controller for Taxi operations.
- * Delegates logic to TaxiService and hides service details.
- */
+/** Handles taxi-related operations (Singleton). */
 public class TaxiController {
 
-    private final TaxiService taxiService;
-    private static TaxiController instance;
+    private final TaxiServiceImpl taxiService;
 
+    /** Private constructor */
     private TaxiController() {
-        this.taxiService = TaxiService.getInstance();
+        this.taxiService = TaxiServiceImpl.getInstance();
     }
 
+    /** Singleton instance holder */
+    private static final class Instance {
+        private static final TaxiController CONTROLLER = new TaxiController();
+    }
+
+    /** Returns the singleton instance */
     public static TaxiController getInstance() {
-
-        if (Objects.isNull(instance)) {
-            instance = new TaxiController();
-        }
-        return instance;
+        return Instance.CONTROLLER;
     }
 
-    /** Get all taxis*/
+    /** Returns all taxis */
     public Collection<Taxi> get() {
         return taxiService.get();
     }
 
-    /** Get taxi by ID */
+    /** Returns taxi by ID */
     public Taxi get(final int id) {
         return taxiService.get(id);
     }
 
-
-    /** Register demo taxis */
+    /** Registers demo taxis */
     public void registerDemoTaxis() {
         taxiService.registerDemoTaxis();
     }

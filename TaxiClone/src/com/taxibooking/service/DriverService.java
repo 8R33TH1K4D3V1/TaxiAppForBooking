@@ -15,8 +15,5 @@ public interface DriverService {
     /** Get all drivers */
     Collection<Driver> get();
 
-    /** Singleton access */
-    static DriverService getInstance() {
-        return DriverServiceImpl.getInstance();
-    }
+
 }

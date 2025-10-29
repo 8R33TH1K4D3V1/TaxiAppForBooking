@@ -16,7 +16,7 @@ class FareServiceImpl implements FareService {
 
         final double seaterMultiplier = switch (seater) {
             case 6 -> 1.3;
-            case 8 -> 1.6;
+            case 7 -> 1.6;
             default -> 1.0;
         };
 

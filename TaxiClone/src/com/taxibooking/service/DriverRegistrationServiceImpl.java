@@ -2,31 +2,31 @@ package com.taxibooking.service;
 
 import com.taxibooking.model.Driver;
 import java.util.Collection;
-import java.util.Objects;
 
 /**
- * Package-private implementation of DriverRegistrationService.
- * Hidden from external access.
+ * Singleton implementation of DriverRegistrationService.
+ * Uses internal static class for instance management.
  */
-class DriverRegistrationServiceImpl implements DriverRegistrationService {
+public class DriverRegistrationServiceImpl implements DriverRegistrationService {
 
-    private static DriverRegistrationServiceImpl instance;
     private final Collection<Driver> drivers;
 
-    /** Private constructor — only accessible through getInstance() */
+    /** Private constructor — only accessible within this class */
     private DriverRegistrationServiceImpl() {
-        this.drivers = DriverService.getInstance().get();
+        this.drivers = DriverServiceImpl.getInstance().get();
     }
 
-    /** Singleton access — called from interface factory method */
-    static DriverRegistrationServiceImpl getInstance() {
-
-        if (Objects.isNull(instance)) {
-            instance = new DriverRegistrationServiceImpl();
-        }
-        return instance;
+    /** Internal static class for Singleton instance */
+    private static final class Instance {
+        private static final DriverRegistrationServiceImpl SERVICE = new DriverRegistrationServiceImpl();
     }
 
+    /** Returns the Singleton instance */
+    public static DriverRegistrationServiceImpl getInstance() {
+        return Instance.SERVICE;
+    }
+
+    /** Registers a driver */
     @Override
     public void register(final Driver driver) {
         drivers.add(driver);
@@ -34,6 +34,7 @@ class DriverRegistrationServiceImpl implements DriverRegistrationService {
         System.out.println("Driver registered successfully: " + driver.getName());
     }
 
+    /** Removes a driver by ID */
     @Override
     public void unregister(final int driverId) {
         boolean removed = drivers.removeIf(driver -> driver.getId() == driverId);

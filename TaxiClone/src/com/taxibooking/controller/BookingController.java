@@ -21,17 +21,14 @@ public class BookingController {
     public Collection<Booking> get() {
         return bookingService.get();
     }
-
     /** Get bookings for a specific customer */
     public Collection<Booking> get(final int customerId) {
         return bookingService.get(customerId);
     }
-
     /** End an active booking */
     public void end(final int bookingId) {
         bookingService.end(bookingId);
     }
-
     /** Rate a driver/taxi */
     public void rate(final int taxiId, final double rating) {
         bookingService.rate(taxiId, rating);

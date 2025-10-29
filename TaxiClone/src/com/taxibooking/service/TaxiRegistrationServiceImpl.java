@@ -2,43 +2,39 @@ package com.taxibooking.service;
 
 import com.taxibooking.model.Taxi;
 import java.util.Collection;
-import java.util.Objects;
 
 /**
- * Package-private implementation of TaxiRegistrationService.
- * Hidden from external access.
+ * Singleton implementation of TaxiRegistrationService.
+ * Uses internal static class for instance management.
  */
-class TaxiRegistrationServiceImpl implements TaxiRegistrationService {
+public class TaxiRegistrationServiceImpl implements TaxiRegistrationService {
 
-    private static TaxiRegistrationServiceImpl instance;
     private final Collection<Taxi> taxis;
 
-    /**
-     * Private constructor — only accessible via getInstance()
-     */
+    /** Private constructor — only accessible within this class */
     private TaxiRegistrationServiceImpl() {
-        this.taxis = TaxiService.getInstance().get();
+        this.taxis = TaxiServiceImpl.getInstance().get();
     }
 
-    /**
-     * Singleton access — called from interface factory method
-     */
-    static TaxiRegistrationServiceImpl getInstance() {
-
-        if (Objects.isNull(instance)) {
-            instance = new TaxiRegistrationServiceImpl();
-        }
-        return instance;
+    /** Internal static class for Singleton instance */
+    private static final class Instance {
+        private static final TaxiRegistrationServiceImpl SERVICE = new TaxiRegistrationServiceImpl();
     }
 
+    /** Returns the Singleton instance */
+    public static TaxiRegistrationServiceImpl getInstance() {
+        return Instance.SERVICE;
+    }
 
+    /** Registers a taxi */
     @Override
     public void register(final Taxi taxi) {
         taxis.add(taxi);
 
-        System.out.println("Taxi with ID " + taxi.getId() + " registered successfully.");
+        System.out.println("Taxi registered successfully: ID " + taxi.getId());
     }
 
+    /** Removes a taxi by ID */
     @Override
     public void unregister(final int taxiId) {
         boolean removed = taxis.removeIf(taxi -> taxi.getId() == taxiId);
@@ -49,5 +45,4 @@ class TaxiRegistrationServiceImpl implements TaxiRegistrationService {
             System.out.println("Taxi ID not found.");
         }
     }
-
 }

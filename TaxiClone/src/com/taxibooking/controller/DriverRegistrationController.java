@@ -1,30 +1,28 @@
 package com.taxibooking.controller;
 
 import com.taxibooking.model.Driver;
-import com.taxibooking.service.DriverRegistrationService;
-
-import java.util.Objects;
+import com.taxibooking.service.DriverRegistrationServiceImpl;
 
 /**
  * Handles driver registration operations (Singleton).
  */
 public class DriverRegistrationController {
 
-    private final DriverRegistrationService driverRegistrationService;
-    private static DriverRegistrationController instance;
+    private final DriverRegistrationServiceImpl driverRegistrationService;
 
-    /** Private constructor for Singleton */
+    /** Private constructor */
     private DriverRegistrationController() {
-        this.driverRegistrationService = DriverRegistrationService.getInstance();
+        this.driverRegistrationService = DriverRegistrationServiceImpl.getInstance();
     }
 
-    /** Returns Singleton instance */
-    public static DriverRegistrationController getInstance() {
+    /** Internal static class for singleton instance */
+    private static final class Instance {
+        private static final DriverRegistrationController CONTROLLER = new DriverRegistrationController();
+    }
 
-        if (Objects.isNull(instance)) {
-            instance = new DriverRegistrationController();
-        }
-        return instance;
+    /** Returns singleton instance */
+    public static DriverRegistrationController getInstance() {
+        return Instance.CONTROLLER;
     }
 
     /** Registers a driver */
