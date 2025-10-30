@@ -37,23 +37,23 @@ public class Taxi {
     }
 
     /** Setters */
-    public void setId(int id) {
+    public void setId(final int id) {
         this.id = id;
     }
 
-    public void setDriver(Driver driver) {
+    public void setDriver(final Driver driver) {
         this.driver = driver;
     }
 
-    public void setSeater(int seater) {
+    public void setSeater(final int seater) {
         this.seater = seater;
     }
 
-    public void setAcAvailable(boolean acAvailable) {
+    public void setAcAvailable(final boolean acAvailable) {
         this.isAcAvailable = acAvailable;
     }
 
-    public void setAvailable(boolean available) {
+    public void setAvailable(final boolean available) {
         this.isAvailable = available;
     }
 }

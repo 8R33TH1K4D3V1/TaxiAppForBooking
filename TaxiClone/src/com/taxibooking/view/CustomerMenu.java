@@ -8,10 +8,7 @@ import com.taxibooking.model.Customer;
 import com.taxibooking.model.Driver;
 import com.taxibooking.model.Taxi;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Objects;
-import java.util.Scanner;
+import java.util.*;
 
 /**
  * Handles all customer interactions in the taxi booking system.
@@ -55,29 +52,38 @@ public class CustomerMenu {
 
     /** Handles customer login or registration */
     private Customer login() {
-        System.out.print("Enter your Customer ID: ");
-        final int id = input.nextInt();
 
-        input.nextLine();
-        Customer customer = customerList.stream()
-                .filter(existingCustomer -> existingCustomer.getId() == id)
-                .findFirst()
-                .orElse(null);
+        while (true) {
+            System.out.print("Enter your Customer ID: ");
 
-        if (Objects.isNull(customer)) {
+            if (!input.hasNextInt()) {
+                System.out.println("Invalid ID. Try again.");
+                input.nextLine();
+                continue;
+            }
+
+            final int customerId = input.nextInt();
+            input.nextLine();
+
             System.out.print("Enter your Name: ");
-            final String name = input.nextLine();
+            final String customerName = input.nextLine().trim();
 
-            customer = new Customer();
-            customer.setId(id);
-            customer.setName(name);
+            for (final Customer existingCustomer : customerList) {
 
-            customerList.add(customer);
+                if (existingCustomer.getId() == customerId) {
+                    return existingCustomer;
+                }
+            }
+
+            final Customer newCustomer = new Customer();
+
+            newCustomer.setId(customerId);
+            newCustomer.setName(customerName);
+            customerList.add(newCustomer);
+            return newCustomer;
         }
-
-        System.out.println("Welcome, " + customer.getName() + "!");
-        return customer;
     }
+
 
     /** Displays customer menu options */
     private void menu() {
@@ -147,6 +153,7 @@ public class CustomerMenu {
             if (seatCount == 4 || seatCount == 6 || seatCount == 7) {
                 break;
             }
+
             System.out.println("Invalid input. Enter 4, 6, or 7.");
         }
 
@@ -199,9 +206,7 @@ public class CustomerMenu {
 
         System.out.print("Distance (km): ");
         final double distance = input.nextDouble();
-
         final double fare = fareController.calculate(distance, selectedTaxi.isAcAvailable(), selectedTaxi.getSeater());
-
         final Booking booking = new Booking();
 
         booking.setTaxi(selectedTaxi);
@@ -210,14 +215,13 @@ public class CustomerMenu {
         booking.setDropLocation(dropLocation);
         booking.setFare(fare);
         booking.setActive(true);
-
         bookingController.book(booking);
         System.out.printf("Taxi booked successfully! Fare: ₹%.2f%n", fare);
     }
 
     /** Displays customer's past bookings */
     private void viewBookingHistory(final Customer customer) {
-        final Collection<Booking> bookings = bookingController.get(customer.getId());
+        final Collection<Booking> bookings = bookingController.get(customer.getId()); // ✅ Cached
 
         if (bookings.isEmpty()) {
             System.out.println("\nNo bookings found.");
@@ -227,13 +231,14 @@ public class CustomerMenu {
         final StringBuilder bookingsInfo = new StringBuilder("\n--- YOUR BOOKING HISTORY ---\n");
 
         bookings.forEach(booking -> {
-            final Driver driver = booking.getTaxi().getDriver();
+            final Taxi taxi = booking.getTaxi();
+            final Driver driver = taxi.getDriver();
             final String driverName = Objects.nonNull(driver) ? driver.getName() : "Not assigned";
 
             bookingsInfo.append(String.format(
                     "Booking ID: %d | Taxi ID: %d | Driver: %s | Fare: ₹%.2f | Status: %s%n",
                     booking.getId(),
-                    booking.getTaxi().getId(),
+                    taxi.getId(),
                     driverName,
                     booking.getFare(),
                     booking.isActive() ? "Active" : "Completed"
@@ -254,8 +259,7 @@ public class CustomerMenu {
 
     /** Allows customer to rate a driver */
     private void rateDriver(final Customer customer) {
-        final Collection<Booking> bookings = bookingController.get(customer.getId());
-
+        final Collection<Booking> bookings = bookingController.get(customer.getId()); // ✅ Cached
         final Collection<Booking> completedBookings = bookings.stream()
                 .filter(booking -> !booking.isActive())
                 .toList();

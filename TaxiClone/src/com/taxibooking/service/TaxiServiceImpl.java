@@ -2,110 +2,114 @@ package com.taxibooking.service;
 
 import com.taxibooking.model.Taxi;
 import com.taxibooking.model.Driver;
-import java.util.ArrayList;
-import java.util.Collection;
+
+import java.util.*;
 
 /**
- * Singleton implementation of TaxiService
- * Uses internal static class (Bill Pugh pattern)
+ * Singleton implementation of TaxiService.
+ * Uses Map for O(1) access and update operations.
+ * Ensures efficient taxi management.
  */
 public class TaxiServiceImpl implements TaxiService {
 
-    private final Collection<Taxi> taxis = new ArrayList<>();
+    /** Stores taxis by their ID for quick access */
+    private final Map<Integer, Taxi> taxisById = new HashMap<>();
 
+    /** Private constructor */
     private TaxiServiceImpl() {}
 
+    /** Singleton holder (Bill Pugh pattern) */
     private static final class Instance {
         private static final TaxiServiceImpl SERVICE = new TaxiServiceImpl();
     }
 
+    /** Returns Singleton instance */
     public static TaxiServiceImpl getInstance() {
         return Instance.SERVICE;
     }
 
+    /** Get all taxis (read-only view) */
     @Override
     public Collection<Taxi> get() {
-        return java.util.Collections.unmodifiableCollection(taxis);
+        return Collections.unmodifiableCollection(taxisById.values());
     }
 
+    /** Get taxi by ID (null if not found) */
     @Override
     public Taxi get(final int id) {
-
-        for (Taxi taxi : taxis) {
-
-            if (taxi.getId() == id) {
-                return taxi;
-            }
-        }
-
-        return null;
+        return taxisById.get(id);
     }
 
+    /** Add new taxi safely */
     public void addTaxi(final Taxi taxi) {
-        taxis.add(taxi);
+
+        if (Objects.nonNull(taxi)) {
+            taxisById.put(taxi.getId(), taxi);
+        }
     }
 
-    public void removeTaxi(final int id) {
-        taxis.remove(id);
+    /** Remove taxi safely (returns true if removed) */
+    public boolean removeTaxi(final int id) {
+        return Objects.nonNull(taxisById.remove(id));
     }
 
-
+    /** Register demo taxis (for initialization/testing) */
     @Override
     public void registerDemoTaxis() {
-        Driver d1 = new Driver();
+        final Driver d1 = new Driver();
         d1.setId(101);
         d1.setName("Ramesh");
         d1.setPhoneNo("7373771722");
         d1.setRating(4.5);
 
-        Taxi t1 = new Taxi();
+        final Taxi t1 = new Taxi();
         t1.setId(1);
         t1.setDriver(d1);
         t1.setSeater(4);
         t1.setAcAvailable(true);
         t1.setAvailable(true);
-        taxis.add(t1);
+        taxisById.put(t1.getId(), t1);
 
-        Driver d2 = new Driver();
+        final Driver d2 = new Driver();
         d2.setId(102);
         d2.setName("Nick");
         d2.setPhoneNo("8484998446");
         d2.setRating(4.7);
 
-        Taxi t2 = new Taxi();
+        final Taxi t2 = new Taxi();
         t2.setId(2);
         t2.setDriver(d2);
         t2.setSeater(6);
         t2.setAcAvailable(true);
         t2.setAvailable(true);
-        taxis.add(t2);
+        taxisById.put(t2.getId(), t2);
 
-        Driver d3 = new Driver();
+        final Driver d3 = new Driver();
         d3.setId(103);
         d3.setName("Mike");
         d3.setPhoneNo("9442371722");
         d3.setRating(4.2);
 
-        Taxi t3 = new Taxi();
+        final Taxi t3 = new Taxi();
         t3.setId(3);
         t3.setDriver(d3);
         t3.setSeater(6);
         t3.setAcAvailable(false);
         t3.setAvailable(true);
-        taxis.add(t3);
+        taxisById.put(t3.getId(), t3);
 
-        Driver d4 = new Driver();
+        final Driver d4 = new Driver();
         d4.setId(104);
         d4.setName("Danny");
         d4.setPhoneNo("9443701100");
         d4.setRating(4.8);
 
-        Taxi t4 = new Taxi();
+        final Taxi t4 = new Taxi();
         t4.setId(4);
         t4.setDriver(d4);
         t4.setSeater(4);
         t4.setAcAvailable(false);
         t4.setAvailable(true);
-        taxis.add(t4);
+        taxisById.put(t4.getId(), t4);
     }
 }

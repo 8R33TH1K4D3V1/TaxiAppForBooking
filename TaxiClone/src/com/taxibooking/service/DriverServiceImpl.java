@@ -1,23 +1,24 @@
 package com.taxibooking.service;
 
 import com.taxibooking.model.Driver;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Objects;
+
+import java.util.*;
+
 
 /**
  * Singleton implementation of DriverService.
- * Handles all driver-related data operations.
- * (No exceptions thrown)
+ * Uses Map for O(1) access and update operations.
+ * Ensures efficient and safe driver management.
  */
 public class DriverServiceImpl implements DriverService {
 
-    private final Collection<Driver> driverList = new ArrayList<>();
+    /** Stores drivers by their ID for quick access */
+    private final Map<Integer, Driver> driverMap = new HashMap<>();
 
     /** Private constructor */
     private DriverServiceImpl() {}
 
-    /** Internal static class for singleton instance */
+    /** Holder class for singleton instance */
     private static final class Instance {
         private static final DriverServiceImpl SERVICE = new DriverServiceImpl();
     }
@@ -27,54 +28,38 @@ public class DriverServiceImpl implements DriverService {
         return Instance.SERVICE;
     }
 
-    /** Update driver details safely */
+    /** Add or update driver details safely */
     @Override
-    public void update(final Driver updatedDriver) {
+    public void update(final Driver driver) {
 
-        if (Objects.isNull(updatedDriver)) {
-            return;
+        if (Objects.nonNull(driver)) {
+            driverMap.put(driver.getId(), driver);
         }
-
-        Driver existingDriver = get(updatedDriver.getId());
-
-        if (Objects.nonNull(existingDriver)) {
-            driverList.remove(existingDriver);
-        }
-
-        driverList.add(updatedDriver);
     }
 
     /** Get driver by ID (null if not found) */
     @Override
     public Driver get(final int id) {
-
-        for (Driver driver : driverList) {
-
-            if (driver.getId() == id) {
-                return driver;
-            }
-        }
-
-        return null;
+        return driverMap.get(id);
     }
 
-
-    /** Get all drivers (read-only) */
+    /** Get all drivers (read-only collection) */
     @Override
     public Collection<Driver> get() {
-        return java.util.Collections.unmodifiableCollection(driverList);
+        return Collections.unmodifiableCollection(driverMap.values());
     }
 
-    /** Add driver safely */
+    /** Add new taxi safely */
     public void addDriver(final Driver driver) {
 
         if (Objects.nonNull(driver)) {
-            driverList.add(driver);
+            driverMap.put(driver.getId(), driver);
         }
     }
 
-    /** Remove driver safely (no error thrown) */
-    public boolean removeDriver(final int driverId) {
-        return driverList.remove(driverId);
+    /** Remove taxi safely (returns true if removed) */
+    public boolean removeDriver(final int id) {
+        return Objects.nonNull(driverMap.remove(id));
     }
+
 }

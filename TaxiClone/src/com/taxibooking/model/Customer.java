@@ -21,11 +21,11 @@ public class Customer {
     }
 
     /** Setters */
-    public void setId(int id) {
+    public void setId(final int id) {
         this.id = id;
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = name;
     }
 }

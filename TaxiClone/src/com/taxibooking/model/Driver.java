@@ -32,19 +32,19 @@ public class Driver {
     }
 
     /** Setters */
-    public void setId(int id) {
+    public void setId(final int id) {
         this.id = id;
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = name;
     }
 
-    public void setRating(double rating) {
+    public void setRating(final double rating) {
         this.rating = rating;
     }
 
-    public void setPhoneNo(String phoneNo) {
+    public void setPhoneNo(final String phoneNo) {
         this.phoneNo = phoneNo;
     }
 }

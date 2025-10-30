@@ -17,8 +17,7 @@ public class Booking {
     private boolean isActive;
 
     /** No-argument constructor */
-    public Booking() {
-    }
+    public Booking() {}
 
     /** Getters */
     public int getId() {
@@ -49,32 +48,32 @@ public class Booking {
         return isActive;
     }
 
-    /**Setters */
-    public void setId(int id) {
+    /** Setters */
+    public void setId(final int id) {
         this.id = id;
     }
 
-    public void setTaxi(Taxi taxi) {
+    public void setTaxi(final Taxi taxi) {
         this.taxi = Objects.requireNonNull(taxi, "Taxi cannot be null");
     }
 
-    public void setCustomer(Customer customer) {
+    public void setCustomer(final Customer customer) {
         this.customer = Objects.requireNonNull(customer, "Customer cannot be null");
     }
 
-    public void setPickupLocation(String pickupLocation) {
+    public void setPickupLocation(final String pickupLocation) {
         this.pickupLocation = Objects.requireNonNullElse(pickupLocation, "Unknown Pickup");
     }
 
-    public void setDropLocation(String dropLocation) {
+    public void setDropLocation(final String dropLocation) {
         this.dropLocation = Objects.requireNonNullElse(dropLocation, "Unknown Drop");
     }
 
-    public void setFare(double fare) {
+    public void setFare(final double fare) {
         this.fare = fare;
     }
 
-    public void setActive(boolean active) {
+    public void setActive(final boolean active) {
         this.isActive = active;
     }
 }

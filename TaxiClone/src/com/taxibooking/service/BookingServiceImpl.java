@@ -5,19 +5,16 @@ import com.taxibooking.model.Customer;
 import com.taxibooking.model.Driver;
 import com.taxibooking.model.Taxi;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Singleton implementation of BookingService.
- * Contains only core business logic (no printing or exceptions).
+ * Contains only core business logic.
  */
 public class BookingServiceImpl implements BookingService {
 
-    private final Collection<Booking> bookings = new ArrayList<>();
+    private final Map<Integer, Booking> bookingMap = new HashMap<>();
     private final AtomicInteger bookingIdGenerator = new AtomicInteger(1);
 
     /** Private constructor for Singleton */
@@ -37,30 +34,47 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public void book(final Booking booking) {
 
-        if (Objects.nonNull(booking)
-                && Objects.nonNull(booking.getTaxi())
-                && Objects.nonNull(booking.getCustomer())) {
-            final Taxi taxi = booking.getTaxi();
-
-            booking.setId(bookingIdGenerator.getAndIncrement());
-            bookings.add(booking);
-
-            taxi.setAvailable(false);
+        if (Objects.isNull(booking)) {
+            return;
         }
+
+        final Taxi taxi = booking.getTaxi();
+        final Customer customer = booking.getCustomer();
+
+        if (Objects.isNull(taxi) || Objects.isNull(customer)) {
+            return;
+        }
+
+        if (!taxi.isAvailable()) {
+            return;
+        }
+
+        // Assign ID and mark booking as active
+        booking.setId(bookingIdGenerator.getAndIncrement());
+        booking.setActive(true);
+
+        // Save booking and update taxi status
+        bookingMap.put(booking.getId(), booking);
+        taxi.setAvailable(false);
     }
 
     /** Returns all bookings (read-only) */
     @Override
     public Collection<Booking> get() {
-        return Collections.unmodifiableCollection(bookings);
+        return Collections.unmodifiableCollection(bookingMap.values());
     }
 
     /** Returns all bookings for a specific customer (read-only) */
     @Override
     public Collection<Booking> get(final int customerId) {
+
+        if (customerId <= 0) {
+            return Collections.emptyList();
+        }
+
         final Collection<Booking> customerBookings = new ArrayList<>();
 
-        for (Booking booking : bookings) {
+        for (final Booking booking : bookingMap.values()) {
             final Customer customer = booking.getCustomer();
 
             if (Objects.nonNull(customer) && customer.getId() == customerId) {
@@ -74,18 +88,14 @@ public class BookingServiceImpl implements BookingService {
     /** Ends an active booking and makes taxi available again */
     @Override
     public void end(final int bookingId) {
+        final Booking booking = bookingMap.get(bookingId);
 
-        for (Booking booking : bookings) {
+        if (Objects.nonNull(booking) && booking.isActive()) {
+            booking.setActive(false);
+            final Taxi taxi = booking.getTaxi();
 
-            if (booking.getId() == bookingId && booking.isActive()) {
-                booking.setActive(false);
-                final Taxi taxi = booking.getTaxi();
-
-                if (Objects.nonNull(taxi)) {
-                    taxi.setAvailable(true);
-                }
-
-                break;
+            if (Objects.nonNull(taxi)) {
+                taxi.setAvailable(true);
             }
         }
     }
@@ -94,7 +104,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public void rate(final int taxiId, final double rating) {
 
-        for (Booking booking : bookings) {
+        for (final Booking booking : bookingMap.values()) {
             final Taxi taxi = booking.getTaxi();
 
             if (Objects.nonNull(taxi) && taxi.getId() == taxiId) {

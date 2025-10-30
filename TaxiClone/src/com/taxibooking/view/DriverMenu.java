@@ -37,7 +37,7 @@ public class DriverMenu {
 
     /** Runs the driver menu loop. */
     public void run() {
-        Driver currentDriver = login();
+        final Driver currentDriver = login();
 
         if (Objects.isNull(currentDriver)) {
             return;
