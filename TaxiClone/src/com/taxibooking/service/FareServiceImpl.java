@@ -1,14 +1,27 @@
 package com.taxibooking.service;
 
 /**
- * Implementation of FareService.
+ * Singleton implementation of FareService.
  * Calculates taxi fares based on distance, AC preference, and seater type.
  */
-class FareServiceImpl implements FareService {
+public class FareServiceImpl implements FareService {
 
     private static final double BASE_FARE = 50;
     private static final double AC_RATE_PER_KM = 20;
     private static final double NON_AC_RATE_PER_KM = 15;
+
+    /** Private constructor */
+    private FareServiceImpl() {}
+
+    /** Internal static class for Singleton instance */
+    private static final class Instance {
+        private static final FareServiceImpl SERVICE = new FareServiceImpl();
+    }
+
+    /** Returns singleton instance */
+    public static FareServiceImpl getInstance() {
+        return Instance.SERVICE;
+    }
 
     @Override
     public double calculate(final double distance, final boolean ac, final int seater) {

@@ -6,7 +6,9 @@ import java.util.Collection;
 import java.util.Objects;
 
 /**
- * Singleton implementation of DriverService using internal static class.
+ * Singleton implementation of DriverService.
+ * Handles all driver-related data operations.
+ * (No exceptions thrown)
  */
 public class DriverServiceImpl implements DriverService {
 
@@ -25,7 +27,7 @@ public class DriverServiceImpl implements DriverService {
         return Instance.SERVICE;
     }
 
-    /** Update driver details */
+    /** Update driver details safely */
     @Override
     public void update(final Driver updatedDriver) {
 
@@ -38,21 +40,41 @@ public class DriverServiceImpl implements DriverService {
         if (Objects.nonNull(existingDriver)) {
             driverList.remove(existingDriver);
         }
+
         driverList.add(updatedDriver);
     }
 
-    /** Get driver by ID */
+    /** Get driver by ID (null if not found) */
     @Override
     public Driver get(final int id) {
-        return driverList.stream()
-                .filter(driver -> driver.getId() == id)
-                .findFirst()
-                .orElse(null);
+
+        for (Driver driver : driverList) {
+
+            if (driver.getId() == id) {
+                return driver;
+            }
+        }
+
+        return null;
     }
 
-    /** Get all drivers */
+
+    /** Get all drivers (read-only) */
     @Override
     public Collection<Driver> get() {
-        return driverList;
+        return java.util.Collections.unmodifiableCollection(driverList);
+    }
+
+    /** Add driver safely */
+    public void addDriver(final Driver driver) {
+
+        if (Objects.nonNull(driver)) {
+            driverList.add(driver);
+        }
+    }
+
+    /** Remove driver safely (no error thrown) */
+    public boolean removeDriver(final int driverId) {
+        return driverList.remove(driverId);
     }
 }

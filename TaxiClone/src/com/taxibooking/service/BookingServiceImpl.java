@@ -1,136 +1,111 @@
 package com.taxibooking.service;
 
-
 import com.taxibooking.model.Booking;
-import com.taxibooking.model.Taxi;
 import com.taxibooking.model.Customer;
 import com.taxibooking.model.Driver;
+import com.taxibooking.model.Taxi;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
-
 /**
- * Non-thread-safe implementation of BookingService.
- * Suitable for single-user or sequential use.
+ * Singleton implementation of BookingService.
+ * Contains only core business logic (no printing or exceptions).
  */
-class BookingServiceImpl implements BookingService {
+public class BookingServiceImpl implements BookingService {
 
     private final Collection<Booking> bookings = new ArrayList<>();
-    private final AtomicInteger bookingIdCounter = new AtomicInteger(1);
-    private static BookingServiceImpl instance;
+    private final AtomicInteger bookingIdGenerator = new AtomicInteger(1);
 
+    /** Private constructor for Singleton */
+    private BookingServiceImpl() {}
 
-    /** Private constructor — only accessible through getInstance() */
-    private BookingServiceImpl() { }
-
-
-    /** Singleton instance accessor */
-    public static BookingServiceImpl getInstance() {
-
-        if (Objects.isNull(instance)) {
-            instance = new BookingServiceImpl();
-        }
-        return instance;
+    /** Inner static class for thread-safe Singleton initialization */
+    private static final class Instance {
+        private static final BookingServiceImpl SERVICE = new BookingServiceImpl();
     }
 
+    /** Returns the Singleton instance */
+    public static BookingServiceImpl getInstance() {
+        return Instance.SERVICE;
+    }
 
+    /** Books a taxi if available */
     @Override
     public void book(final Booking booking) {
 
-        if (Objects.isNull(booking) ||
-                Objects.isNull(booking.getTaxi()) ||
-                Objects.isNull(booking.getCustomer())) {
-            System.out.println("Invalid booking details.");
-            return;
+        if (Objects.nonNull(booking)
+                && Objects.nonNull(booking.getTaxi())
+                && Objects.nonNull(booking.getCustomer())) {
+            final Taxi taxi = booking.getTaxi();
+
+            booking.setId(bookingIdGenerator.getAndIncrement());
+            bookings.add(booking);
+
+            taxi.setAvailable(false);
         }
-
-        final Taxi taxi = booking.getTaxi();
-
-        if (!taxi.isAvailable()) {
-            System.out.println("Taxi ID " + taxi.getId() + " is not available.");
-            return;
-        }
-
-        booking.setId(bookingIdCounter.getAndIncrement());
-        bookings.add(booking);
-        taxi.setAvailable(false);
-
-        System.out.println("Booking successful! Booking ID: " + booking.getId() + ", Fare: ₹" + booking.getFare());
     }
 
-
+    /** Returns all bookings (read-only) */
     @Override
     public Collection<Booking> get() {
-        return new ArrayList<>(bookings);
+        return Collections.unmodifiableCollection(bookings);
     }
 
-
+    /** Returns all bookings for a specific customer (read-only) */
     @Override
     public Collection<Booking> get(final int customerId) {
         final Collection<Booking> customerBookings = new ArrayList<>();
 
-        for (final Booking record : bookings) {
-            final Customer customer = record.getCustomer();
+        for (Booking booking : bookings) {
+            final Customer customer = booking.getCustomer();
 
             if (Objects.nonNull(customer) && customer.getId() == customerId) {
-                customerBookings.add(record);
+                customerBookings.add(booking);
             }
         }
 
-        return customerBookings;
+        return Collections.unmodifiableCollection(customerBookings);
     }
 
-
+    /** Ends an active booking and makes taxi available again */
     @Override
     public void end(final int bookingId) {
-        final Booking bookingRecord = bookings.stream()
-                .filter(record -> record.getId() == bookingId && record.isActive())
-                .findFirst()
-                .orElse(null);
 
-        if (Objects.nonNull(bookingRecord)) {
-            Taxi taxi = bookingRecord.getTaxi();
-            bookingRecord.setActive(false);
+        for (Booking booking : bookings) {
 
-            if (Objects.nonNull(taxi)) {
-                taxi.setAvailable(true);
+            if (booking.getId() == bookingId && booking.isActive()) {
+                booking.setActive(false);
+                final Taxi taxi = booking.getTaxi();
+
+                if (Objects.nonNull(taxi)) {
+                    taxi.setAvailable(true);
+                }
+
+                break;
             }
-
-            System.out.println("Booking ID " + bookingId + " has been ended successfully.");
-        } else {
-            System.out.println("Booking ID not found or already completed.");
         }
     }
 
-
+    /** Rates a taxi’s driver if valid */
     @Override
     public void rate(final int taxiId, final double rating) {
-        final Booking bookingRecord = bookings.stream()
-                .filter(record -> {
-                    final Taxi taxi = record.getTaxi();
-                    return Objects.nonNull(taxi) && taxi.getId() == taxiId;
-                })
-                .findFirst()
-                .orElse(null);
 
-        if (Objects.isNull(bookingRecord)) {
-            System.out.println("Taxi not found for rating.");
-            return;
-        }
+        for (Booking booking : bookings) {
+            final Taxi taxi = booking.getTaxi();
 
-        final Taxi taxi = bookingRecord.getTaxi();
-        final Driver driver = taxi.getDriver();
+            if (Objects.nonNull(taxi) && taxi.getId() == taxiId) {
+                final Driver driver = taxi.getDriver();
 
-        if (Objects.nonNull(driver)) {
-            driver.setRating(rating);
+                if (Objects.nonNull(driver)) {
+                    driver.setRating(rating);
+                }
 
-            System.out.println("Driver " + driver.getName() + " rated " + rating + " successfully.");
-        } else {
-            System.out.println("No driver assigned to this taxi.");
+                break;
+            }
         }
     }
-
 }

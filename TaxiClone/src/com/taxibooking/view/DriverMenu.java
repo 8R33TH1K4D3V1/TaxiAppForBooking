@@ -44,6 +44,7 @@ public class DriverMenu {
         }
 
         int choice;
+
         do {
             menu();
             choice = input.nextInt();
@@ -75,8 +76,7 @@ public class DriverMenu {
         final int driverId = input.nextInt();
 
         input.nextLine();
-
-        Driver driver = get(driverId);
+        final Driver driver = get(driverId);
 
         if (Objects.isNull(driver)) {
             System.out.println("Driver ID not found. Returning to main menu...");
@@ -98,6 +98,7 @@ public class DriverMenu {
                 return assignedDriver;
             }
         }
+
         return null;
     }
 
@@ -121,7 +122,6 @@ public class DriverMenu {
         }
 
         driverController.update(driver);
-
         System.out.println("Profile updated successfully!");
     }
 
@@ -138,15 +138,14 @@ public class DriverMenu {
                     && assignedDriver.getId() == driver.getId()
                     && booking.isActive()) {
                 hasBooking = true;
+                final StringBuilder bookingInfo = new StringBuilder();
 
-                StringBuilder bookingInfo = new StringBuilder();
                 bookingInfo.append("Booking ID: ").append(booking.getId())
                         .append(", Customer: ").append(booking.getCustomer().getName())
                         .append(", Pickup: ").append(booking.getPickupLocation())
                         .append(", Drop: ").append(booking.getDropLocation())
                         .append(", Fare: ₹").append(booking.getFare())
                         .append(", Status: Active");
-
                 System.out.println(bookingInfo);
             }
         }
@@ -168,7 +167,7 @@ public class DriverMenu {
             if (Objects.nonNull(assignedDriver)
                     && assignedDriver.getId() == driver.getId()) {
                 hasBooking = true;
-                StringBuilder bookingInfo = new StringBuilder();
+                final StringBuilder bookingInfo = new StringBuilder();
 
                 bookingInfo.append("Booking ID: ").append(booking.getId())
                         .append(", Customer: ").append(booking.getCustomer().getName())
@@ -176,7 +175,6 @@ public class DriverMenu {
                         .append(", Drop: ").append(booking.getDropLocation())
                         .append(", Fare: ₹").append(booking.getFare())
                         .append(", Status: ").append(booking.isActive() ? "Active" : "Completed");
-
                 System.out.println(bookingInfo);
             }
         }

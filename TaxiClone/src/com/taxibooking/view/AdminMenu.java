@@ -7,11 +7,13 @@ import com.taxibooking.controller.TaxiRegistrationController;
 import com.taxibooking.model.Driver;
 import com.taxibooking.model.Taxi;
 
+import java.util.Collection;
 import java.util.Objects;
 import java.util.Scanner;
 
 /**
  * Admin menu for managing taxis and drivers.
+ * Handles user interaction and delegates business logic to controllers.
  */
 public class AdminMenu {
 
@@ -19,18 +21,18 @@ public class AdminMenu {
 
     private final TaxiController taxiController;
     private final DriverController driverController;
-    private final TaxiRegistrationController taxiRegController;
-    private final DriverRegistrationController driverRegController;
+    private final TaxiRegistrationController taxiRegistrationController;
+    private final DriverRegistrationController driverRegistrationController;
 
     public AdminMenu(final TaxiController taxiController,
                      final DriverController driverController,
-                     final TaxiRegistrationController taxiRegController,
-                     final DriverRegistrationController driverRegController) {
+                     final TaxiRegistrationController taxiRegistrationController,
+                     final DriverRegistrationController driverRegistrationController) {
 
         this.taxiController = taxiController;
         this.driverController = driverController;
-        this.taxiRegController = taxiRegController;
-        this.driverRegController = driverRegController;
+        this.taxiRegistrationController = taxiRegistrationController;
+        this.driverRegistrationController = driverRegistrationController;
     }
 
     /** Runs the main admin menu loop */
@@ -45,14 +47,13 @@ public class AdminMenu {
             displayMenu();
 
             final int choice = input.nextInt();
-
             input.nextLine();
 
             switch (choice) {
                 case 1 -> addTaxi();
                 case 2 -> addDriver();
                 case 3 -> viewAllTaxis();
-                case 4 -> viewUnAssignedTaxis();
+                case 4 -> viewUnassignedTaxis();
                 case 5 -> viewUnassignedDrivers();
                 case 6 -> removeTaxi();
                 case 7 -> removeDriver();
@@ -73,7 +74,7 @@ public class AdminMenu {
                 1. Add Taxi
                 2. Add Driver
                 3. View Taxis
-                4. View UnAssigned Taxis
+                4. View Unassigned Taxis
                 5. View Unassigned Drivers
                 6. Remove Taxi
                 7. Remove Driver
@@ -99,37 +100,59 @@ public class AdminMenu {
         final int id = input.nextInt();
 
         System.out.print("Enter No of Seats (4 / 6 / 7): ");
-        int seats;
+        int seatCount;
 
         while (true) {
 
             if (input.hasNextInt()) {
-                seats = input.nextInt();
+                seatCount = input.nextInt();
 
-                if (seats == 4 || seats == 6 || seats == 7) {
+                if (seatCount == 4 || seatCount == 6 || seatCount == 7) {
                     break;
                 }
                 System.out.print("Invalid seat count. Please enter 4, 6, or 7: ");
             } else {
-                System.out.print("Invalid input. Please enter a numeric value (4, 6, or 7): ");
+                System.out.print("Invalid input. Please enter a number (4, 6, or 7): ");
                 input.next();
             }
         }
 
         input.nextLine();
         System.out.print("Is AC available? (Yes/No): ");
-        final boolean acAvailable = input.nextLine().trim().equalsIgnoreCase("yes");
+        String acOption;
+
+        do {
+            acOption = input.nextLine().trim().toLowerCase();
+
+            if (!acOption.equals("yes") && !acOption.equals("no")) {
+                System.out.print("Invalid input. Please enter Yes or No: ");
+            }
+
+        } while (!acOption.equals("yes") && !acOption.equals("no"));
+
+        final boolean isAcAvailable = acOption.equals("yes");
 
         System.out.print("Is Taxi Available? (Yes/No): ");
-        final boolean available = input.nextLine().trim().equalsIgnoreCase("yes");
+        String availabilityOption;
+        do {
+            availabilityOption = input.nextLine().trim().toLowerCase();
 
-        Taxi taxi = new Taxi();
+            if (!availabilityOption.equals("yes") && !availabilityOption.equals("no")) {
+                System.out.print("Invalid input. Please enter Yes or No: ");
+            }
+
+        } while (!availabilityOption.equals("yes") && !availabilityOption.equals("no"));
+
+        final boolean isAvailable = availabilityOption.equals("yes");
+        final Taxi taxi = new Taxi();
+
         taxi.setId(id);
-        taxi.setSeater(seats);
-        taxi.setAcAvailable(acAvailable);
-        taxi.setAvailable(available);
+        taxi.setSeater(seatCount);
+        taxi.setAcAvailable(isAcAvailable);
+        taxi.setAvailable(isAvailable);
 
-        taxiRegController.register(taxi);
+        taxiRegistrationController.register(taxi);
+        System.out.printf("Taxi ID %d registered successfully.%n", id);
     }
 
     /** Adds a new driver */
@@ -142,110 +165,117 @@ public class AdminMenu {
         final String name = input.nextLine();
 
         System.out.print("Enter Driver Phone: ");
-        final String phone = input.nextLine();
+        final String phoneNumber = input.nextLine();
 
-        final double rating = 0.0;
+        final double defaultRating = 0.0;
+        final Driver driver = new Driver();
 
-        Driver driver = new Driver();
         driver.setId(id);
         driver.setName(name);
-        driver.setPhoneNo(phone);
-        driver.setRating(rating);
+        driver.setPhoneNo(phoneNumber);
+        driver.setRating(defaultRating);
 
-        driverRegController.register(driver);
+        driverRegistrationController.register(driver);
+        System.out.printf("Driver '%s' registered successfully.%n", name);
     }
 
     /** Shows all taxis with driver, features, and availability details */
     private void viewAllTaxis() {
         System.out.println("\n--- All Taxis ---");
-        StringBuilder taxiDetailsBuilder = new StringBuilder();
-        var allTaxis = new java.util.LinkedHashSet<>(taxiController.get());
-        allTaxis.addAll(taxiController.get());
+        final Collection<Taxi> allTaxis = taxiController.get();
 
-        for (Taxi taxi : allTaxis) {
-            Driver driver = taxi.getDriver();
+        if (allTaxis.isEmpty()) {
+            System.out.println("No taxis available.");
+            return;
+        }
 
-            taxiDetailsBuilder.append("Taxi ID: ").append(taxi.getId())
-                    .append(", Driver: ").append(Objects.nonNull(driver) ? driver.getName() : "Not Assigned")
-                    .append(", Phone: ").append(Objects.nonNull(driver) ? driver.getPhoneNo() : "N/A")
-                    .append(", Rating: ").append(Objects.nonNull(driver) ? driver.getRating() : "N/A")
-                    .append(", Seater: ").append(taxi.getSeater())
-                    .append(", AC: ").append(taxi.isAcAvailable() ? "Yes" : "No")
-                    .append(", Available: ").append(taxi.isAvailable() ? "Yes" : "No")
+        final StringBuilder taxiInfo = new StringBuilder();
+
+        for (final Taxi taxi : allTaxis) {
+            final Driver driver = taxi.getDriver();
+
+            taxiInfo.append("Taxi ID: ").append(taxi.getId())
+                    .append(" | Driver: ").append(Objects.nonNull(driver) ? driver.getName() : "Not Assigned")
+                    .append(" | Phone: ").append(Objects.nonNull(driver) ? driver.getPhoneNo() : "N/A")
+                    .append(" | Rating: ").append(Objects.nonNull(driver) ? driver.getRating() : "N/A")
+                    .append(" | Seater: ").append(taxi.getSeater())
+                    .append(" | AC: ").append(taxi.isAcAvailable() ? "Yes" : "No")
+                    .append(" | Available: ").append(taxi.isAvailable() ? "Yes" : "No")
                     .append("\n");
         }
 
-        System.out.print(taxiDetailsBuilder);
+        System.out.print(taxiInfo);
     }
 
     /** Displays unassigned taxis */
-    private void viewUnAssignedTaxis() {
+    private void viewUnassignedTaxis() {
         System.out.println("\n--- Unassigned Taxis ---");
-        StringBuilder unassignedTaxiBuilder = new StringBuilder();
+        final StringBuilder unassignedTaxiInfo = new StringBuilder();
 
-        for (final Taxi taxi : taxiController.get()) {
-            if (taxi.getDriver() == null) {
-                unassignedTaxiBuilder.append("Taxi ID: ").append(taxi.getId())
-                        .append(", Seats: ").append(taxi.getSeater())
-                        .append(", AC: ").append(taxi.isAcAvailable() ? "Yes" : "No")
-                        .append(", Available: ").append(taxi.isAvailable() ? "Yes" : "No")
-                        .append("\n");
-            }
-        }
+        taxiController.get().stream()
+                .filter(taxi -> taxi.getDriver() == null)
+                .forEach(taxi -> unassignedTaxiInfo.append("Taxi ID: ").append(taxi.getId())
+                        .append(" | Seats: ").append(taxi.getSeater())
+                        .append(" | AC: ").append(taxi.isAcAvailable() ? "Yes" : "No")
+                        .append(" | Available: ").append(taxi.isAvailable() ? "Yes" : "No")
+                        .append("\n"));
 
-        System.out.print(unassignedTaxiBuilder);
+        System.out.print(unassignedTaxiInfo.isEmpty() ? "All taxis are assigned.\n" : unassignedTaxiInfo);
     }
 
-    /** Displays drivers not assigned to any taxi */
+    /** Displays unassigned drivers */
     private void viewUnassignedDrivers() {
         System.out.println("\n--- Unassigned Drivers ---");
-        StringBuilder unassignedDriverBuilder = new StringBuilder();
+        final StringBuilder unassignedDriverInfo = new StringBuilder();
 
         for (final Driver driver : driverController.get()) {
             final boolean isAssigned = taxiController.get().stream()
                     .anyMatch(taxi -> {
                         final Driver assignedDriver = taxi.getDriver();
-                        return Objects.nonNull(assignedDriver)
-                                && assignedDriver.getId() == driver.getId();
+
+                        return Objects.nonNull(assignedDriver) && assignedDriver.getId() == driver.getId();
                     });
 
             if (!isAssigned) {
-                unassignedDriverBuilder.append("Driver ID: ").append(driver.getId())
-                        .append(", Name: ").append(driver.getName())
-                        .append(", Phone: ").append(driver.getPhoneNo())
-                        .append(", Rating: ").append(driver.getRating())
+                unassignedDriverInfo.append("Driver ID: ").append(driver.getId())
+                        .append(" | Name: ").append(driver.getName())
+                        .append(" | Phone: ").append(driver.getPhoneNo())
+                        .append(" | Rating: ").append(driver.getRating())
                         .append("\n");
             }
         }
 
-        System.out.print(unassignedDriverBuilder);
+        System.out.print(unassignedDriverInfo.isEmpty() ? "All drivers are assigned.\n" : unassignedDriverInfo);
     }
 
     /** Removes a taxi by ID */
     private void removeTaxi() {
         System.out.print("Enter Taxi ID to remove: ");
-        final int id = input.nextInt();
+        final int taxiId = input.nextInt();
 
         input.nextLine();
 
-        taxiRegController.unregister(id);
+        taxiRegistrationController.unregister(taxiId);
+        System.out.printf("Taxi ID %d removed successfully.%n", taxiId);
     }
 
     /** Removes a driver and unassigns from taxis */
     private void removeDriver() {
         System.out.print("Enter Driver ID to remove: ");
-        final int id = input.nextInt();
+        final int driverId = input.nextInt();
 
         input.nextLine();
-
-        driverRegController.unregister(id);
+        driverRegistrationController.unregister(driverId);
 
         taxiController.get().forEach(taxi -> {
-            final Driver driver = taxi.getDriver();
-            if (Objects.nonNull(driver) && driver.getId() == id) {
+            final Driver assignedDriver = taxi.getDriver();
+
+            if (Objects.nonNull(assignedDriver) && assignedDriver.getId() == driverId) {
                 taxi.setDriver(null);
             }
         });
+
+        System.out.printf("Driver ID %d removed successfully.%n", driverId);
     }
 
     /** Assigns a driver to a taxi */
@@ -257,7 +287,6 @@ public class AdminMenu {
         final int driverId = input.nextInt();
 
         input.nextLine();
-
         final Taxi selectedTaxi = taxiController.get().stream()
                 .filter(taxi -> taxi.getId() == taxiId)
                 .findFirst()
@@ -268,18 +297,17 @@ public class AdminMenu {
                 .findFirst()
                 .orElse(null);
 
-        if (selectedTaxi == null) {
+        if (Objects.isNull(selectedTaxi)) {
             System.out.println("Taxi not found!");
             return;
         }
 
-        if (selectedDriver == null) {
+        if (Objects.isNull(selectedDriver)) {
             System.out.println("Driver not found!");
             return;
         }
 
         selectedTaxi.setDriver(selectedDriver);
-
-        System.out.println("Driver " + selectedDriver.getName() + " assigned to Taxi " + selectedTaxi.getId());
+        System.out.printf("Driver '%s' assigned to Taxi ID %d.%n", selectedDriver.getName(), selectedTaxi.getId());
     }
 }

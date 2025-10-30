@@ -8,36 +8,23 @@ import java.util.Collection;
  */
 public interface BookingService {
 
-    /**
-     * Books a taxi using a Booking object
-     */
+    /** Book a taxi. */
     void book(final Booking booking);
 
-    /**
-     * Retrieves all bookings.
-     */
+    /** Get all bookings. */
     Collection<Booking> get();
 
-    /**
-     * Retrieves bookings for a specific customer by ID.
-     */
+    /** Get bookings for a specific customer. */
     Collection<Booking> get(final int customerId);
 
-    /**
-     * Ends a booking by its ID.
-     */
+    /** End a booking by its ID. */
     void end(final int bookingId);
 
-    /**
-     * Rates a taxi after trip completion.
-     */
+    /** Rate a driver or taxi. */
     void rate(final int taxiId, final double rating);
 
-    /**
-     * Factory method to get a BookingService instance.
-     */
+    /** Singleton access to BookingService instance. */
     static BookingService getInstance() {
         return BookingServiceImpl.getInstance();
     }
-
 }

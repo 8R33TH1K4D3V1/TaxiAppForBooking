@@ -1,17 +1,17 @@
 package com.taxibooking.controller;
 
 import com.taxibooking.model.Taxi;
-import com.taxibooking.service.TaxiServiceImpl;
+import com.taxibooking.service.TaxiService;
 import java.util.Collection;
 
 /** Handles taxi-related operations (Singleton). */
 public class TaxiController {
 
-    private final TaxiServiceImpl taxiService;
+    private final TaxiService taxiService;
 
     /** Private constructor */
     private TaxiController() {
-        this.taxiService = TaxiServiceImpl.getInstance();
+        this.taxiService = TaxiService.getInstance();
     }
 
     /** Singleton instance holder */

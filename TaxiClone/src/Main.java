@@ -23,7 +23,7 @@ public final class Main {
     private final MainMenu mainMenu;
 
     public Main() {
-        this.bookingController = new BookingController();
+        this.bookingController = BookingController.getInstance();
         this.taxiController = TaxiController.getInstance();
         this.driverController = DriverController.getInstance();
         this.driverRegController = DriverRegistrationController.getInstance();

@@ -9,8 +9,8 @@ public interface FareService {
     /** Calculates fare using distance, AC requirement, and seater count. */
     double calculate(final double distance, final boolean ac, final int seater);
 
-    /** Factory method to obtain a FareService instance. */
+    /** Singleton access method. */
     static FareService getInstance() {
-        return new FareServiceImpl();
+        return FareServiceImpl.getInstance();
     }
 }

@@ -10,10 +10,13 @@ public interface TaxiService {
     Collection<Taxi> get();
 
     /** Get a single taxi by ID. */
-    Taxi get(int id);
-
+    Taxi get(final int id);
 
     /** Registers demo taxis. */
     void registerDemoTaxis();
 
+    /** Singleton access */
+    static TaxiService getInstance() {
+        return TaxiServiceImpl.getInstance();
+    }
 }

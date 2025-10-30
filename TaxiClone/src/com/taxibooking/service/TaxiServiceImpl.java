@@ -2,7 +2,6 @@ package com.taxibooking.service;
 
 import com.taxibooking.model.Taxi;
 import com.taxibooking.model.Driver;
-
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -14,21 +13,19 @@ public class TaxiServiceImpl implements TaxiService {
 
     private final Collection<Taxi> taxis = new ArrayList<>();
 
-    private TaxiServiceImpl() { }
+    private TaxiServiceImpl() {}
 
-    /** Internal static class for singleton instance */
     private static final class Instance {
         private static final TaxiServiceImpl SERVICE = new TaxiServiceImpl();
     }
 
-    /** Returns singleton instance */
     public static TaxiServiceImpl getInstance() {
         return Instance.SERVICE;
     }
 
     @Override
     public Collection<Taxi> get() {
-        return taxis;
+        return java.util.Collections.unmodifiableCollection(taxis);
     }
 
     @Override
@@ -40,8 +37,18 @@ public class TaxiServiceImpl implements TaxiService {
                 return taxi;
             }
         }
+
         return null;
     }
+
+    public void addTaxi(final Taxi taxi) {
+        taxis.add(taxi);
+    }
+
+    public void removeTaxi(final int id) {
+        taxis.remove(id);
+    }
+
 
     @Override
     public void registerDemoTaxis() {

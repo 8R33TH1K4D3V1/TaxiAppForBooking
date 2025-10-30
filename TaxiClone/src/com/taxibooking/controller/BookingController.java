@@ -5,31 +5,49 @@ import com.taxibooking.service.BookingService;
 import java.util.Collection;
 
 /**
- * Controller for taxi bookings.
- * Delegates all operations to BookingService.
+ * Controller for handling taxi bookings (Singleton).
+ * Uses BookingService interface — implementation hidden.
  */
 public class BookingController {
 
-    private final BookingService bookingService = BookingService.getInstance();
+    private final BookingService bookingService;
 
-    /** Book a taxi using a Booking object */
+    /** Private constructor — hides implementation. */
+    private BookingController() {
+        this.bookingService = BookingService.getInstance();
+    }
+
+    /** Internal static class for singleton instance. */
+    private static final class Instance {
+        private static final BookingController CONTROLLER = new BookingController();
+    }
+
+    /** Returns singleton instance. */
+    public static BookingController getInstance() {
+        return Instance.CONTROLLER;
+    }
+
+    /** Book a taxi. */
     public void book(final Booking booking) {
         bookingService.book(booking);
     }
 
-    /** Get all bookings */
+    /** Get all bookings. */
     public Collection<Booking> get() {
         return bookingService.get();
     }
-    /** Get bookings for a specific customer */
+
+    /** Get bookings for a specific customer. */
     public Collection<Booking> get(final int customerId) {
         return bookingService.get(customerId);
     }
-    /** End an active booking */
+
+    /** End an active booking. */
     public void end(final int bookingId) {
         bookingService.end(bookingId);
     }
-    /** Rate a driver/taxi */
+
+    /** Rate a driver or taxi. */
     public void rate(final int taxiId, final double rating) {
         bookingService.rate(taxiId, rating);
     }

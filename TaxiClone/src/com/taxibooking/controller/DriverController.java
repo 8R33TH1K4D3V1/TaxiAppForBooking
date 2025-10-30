@@ -1,17 +1,20 @@
 package com.taxibooking.controller;
 
 import com.taxibooking.model.Driver;
-import com.taxibooking.service.DriverServiceImpl;
+import com.taxibooking.service.DriverService;
 import java.util.Collection;
 
-/** Handles driver-related actions */
+/**
+ * Controller for managing driver operations (Singleton).
+ * Delegates all operations to DriverService.
+ */
 public class DriverController {
 
-    private final DriverServiceImpl driverService;
+    private final DriverService driverService;
 
-    /** Private constructor */
+    /** Private constructor — hides implementation */
     private DriverController() {
-        this.driverService = DriverServiceImpl.getInstance();
+        this.driverService = DriverService.getInstance();
     }
 
     /** Internal static class for singleton instance */
@@ -24,14 +27,14 @@ public class DriverController {
         return Instance.CONTROLLER;
     }
 
-    /** Get driver by ID */
-    public Driver get(final int id) {
-        return driverService.get(id);
-    }
-
     /** Update driver details */
     public void update(final Driver driver) {
         driverService.update(driver);
+    }
+
+    /** Get driver by ID */
+    public Driver get(final int id) {
+        return driverService.get(id);
     }
 
     /** Get all drivers */

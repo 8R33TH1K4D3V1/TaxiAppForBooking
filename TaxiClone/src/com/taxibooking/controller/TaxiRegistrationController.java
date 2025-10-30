@@ -1,18 +1,18 @@
 package com.taxibooking.controller;
 
 import com.taxibooking.model.Taxi;
-import com.taxibooking.service.TaxiRegistrationServiceImpl;
+import com.taxibooking.service.TaxiRegistrationService;
 
 /**
  * Handles taxi registration operations (Singleton).
  */
 public class TaxiRegistrationController {
 
-    private final TaxiRegistrationServiceImpl taxiRegistrationService;
+    private final TaxiRegistrationService taxiRegistrationService;
 
     /** Private constructor */
     private TaxiRegistrationController() {
-        this.taxiRegistrationService = TaxiRegistrationServiceImpl.getInstance();
+        this.taxiRegistrationService = TaxiRegistrationService.getInstance();
     }
 
     /** Internal static class for singleton instance */
