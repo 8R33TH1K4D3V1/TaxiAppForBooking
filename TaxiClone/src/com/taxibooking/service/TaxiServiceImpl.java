@@ -3,7 +3,11 @@ package com.taxibooking.service;
 import com.taxibooking.model.Taxi;
 import com.taxibooking.model.Driver;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Singleton implementation of TaxiService.
@@ -48,9 +52,9 @@ public class TaxiServiceImpl implements TaxiService {
         }
     }
 
-    /** Remove taxi safely (returns true if removed) */
-    public boolean removeTaxi(final int id) {
-        return Objects.nonNull(taxisById.remove(id));
+    /** Remove taxi safely */
+    public void removeTaxi(final int id) {
+        taxisById.remove(id);
     }
 
     /** Register demo taxis (for initialization/testing) */

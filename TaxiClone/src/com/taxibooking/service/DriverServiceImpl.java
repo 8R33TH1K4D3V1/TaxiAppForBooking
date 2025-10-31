@@ -2,8 +2,11 @@ package com.taxibooking.service;
 
 import com.taxibooking.model.Driver;
 
-import java.util.*;
-
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Objects;
+import java.util.Collection;
+import java.util.Collections;
 
 /**
  * Singleton implementation of DriverService.
@@ -57,9 +60,11 @@ public class DriverServiceImpl implements DriverService {
         }
     }
 
-    /** Remove taxi safely (returns true if removed) */
-    public boolean removeDriver(final int id) {
-        return Objects.nonNull(driverMap.remove(id));
+    /**
+     * Remove taxi safely
+     */
+    public void removeDriver(final int id) {
+        driverMap.remove(id);
     }
 
 }
