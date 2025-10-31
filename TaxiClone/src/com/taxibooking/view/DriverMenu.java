@@ -35,7 +35,9 @@ public class DriverMenu {
         this.driverController = driverController;
     }
 
-    /** Runs the driver menu loop. */
+    /**
+     * Runs the driver menu loop.
+     */
     public void run() {
         final Driver currentDriver = login();
 
@@ -60,7 +62,9 @@ public class DriverMenu {
         } while (choice != 0);
     }
 
-    /** Displays driver menu options. */
+    /**
+     * Displays driver menu options.
+     */
     private void menu() {
         System.out.println("\n--- DRIVER MENU ---");
         System.out.println("1. Current Booking");
@@ -70,7 +74,9 @@ public class DriverMenu {
         System.out.print("Enter choice: ");
     }
 
-    /** Handles driver login using driver ID. */
+    /**
+     * Handles driver login using driver ID.
+     */
     private Driver login() {
         System.out.print("Enter your Driver ID: ");
         final int driverId = input.nextInt();
@@ -87,22 +93,21 @@ public class DriverMenu {
         return driver;
     }
 
-    /** Retrieves driver by ID from registered taxis. */
+    /**
+     * Retrieves driver by ID from registered taxis.
+     */
     private Driver get(final int id) {
-        final Collection<Taxi> taxis = taxiController.get();
-
-        for (final Taxi taxi : taxis) {
-            final Driver assignedDriver = taxi.getDriver();
-
-            if (Objects.nonNull(assignedDriver) && assignedDriver.getId() == id) {
-                return assignedDriver;
-            }
-        }
-
-        return null;
+        return taxiController.get().stream()
+                .filter(Objects::nonNull)
+                .map(Taxi::getDriver)
+                .filter(driver -> Objects.nonNull(driver) && driver.getId() == id)
+                .findFirst()
+                .orElse(null);
     }
 
-    /** Allows driver to edit profile details. */
+    /**
+     * Allows driver to edit profile details.
+     */
     private void editProfile(final Driver driver) {
         System.out.println("\n--- EDIT PROFILE ---");
         System.out.println("Current Name: " + driver.getName());
@@ -125,62 +130,69 @@ public class DriverMenu {
         System.out.println("Profile updated successfully!");
     }
 
-    /** Displays all active bookings assigned to this driver. */
+    /**
+     * Displays all active bookings assigned to this driver.
+     */
     private void viewCurrentBookings(final Driver driver) {
         System.out.println("\n--- YOUR CURRENT BOOKINGS ---");
-        final Collection<Booking> allBookings = bookingController.get();
-        boolean hasBooking = false;
+        final Collection<Booking> bookings = bookingController.get().stream()
+                .filter(Objects::nonNull)
+                .filter(booking -> Objects.nonNull(booking.getTaxi())
+                        && Objects.nonNull(booking.getTaxi().getDriver())
+                        && booking.getTaxi().getDriver().getId() == driver.getId()
+                        && booking.isActive())
+                .toList();
 
-        for (final Booking booking : allBookings) {
-            final Driver assignedDriver = booking.getTaxi().getDriver();
-
-            if (Objects.nonNull(assignedDriver)
-                    && assignedDriver.getId() == driver.getId()
-                    && booking.isActive()) {
-                hasBooking = true;
-                final StringBuilder bookingInfo = new StringBuilder();
-
-                bookingInfo.append("Booking ID: ").append(booking.getId())
-                        .append(", Customer: ").append(booking.getCustomer().getName())
-                        .append(", Pickup: ").append(booking.getPickupLocation())
-                        .append(", Drop: ").append(booking.getDropLocation())
-                        .append(", Fare: ₹").append(booking.getFare())
-                        .append(", Status: Active");
-                System.out.println(bookingInfo);
-            }
-        }
-
-        if (!hasBooking) {
+        if (bookings.isEmpty()) {
             System.out.println("No current bookings assigned to you.");
+            return;
         }
+
+        final StringBuilder bookingInfo = new StringBuilder();
+
+        bookings.forEach(booking -> bookingInfo.append("Booking ID: ").append(booking.getId())
+                .append(", Customer: ").append(booking.getCustomer().getName())
+                .append(", Pickup: ").append(booking.getPickupLocation())
+                .append(", Drop: ").append(booking.getDropLocation())
+                .append(", Fare: ₹").append(booking.getFare())
+                .append(", Status: Active")
+                .append("\n"));
+
+        System.out.print(bookingInfo);
     }
 
-    /** Displays booking history (active and completed). */
+
+    /**
+     * Displays booking history (active and completed).
+     */
     private void viewBookingHistory(final Driver driver) {
         System.out.println("\n--- YOUR BOOKING HISTORY ---");
-        final Collection<Booking> allBookings = bookingController.get();
-        boolean hasBooking = false;
 
-        for (final Booking booking : allBookings) {
-            final Driver assignedDriver = booking.getTaxi().getDriver();
+        final Collection<Booking> driverBookings = bookingController.get().stream()
+                .filter(booking -> Objects.nonNull(booking)
+                        && Objects.nonNull(booking.getTaxi())
+                        && Objects.nonNull(booking.getTaxi().getDriver())
+                        && booking.getTaxi().getDriver().getId() == driver.getId())
+                .toList();
 
-            if (Objects.nonNull(assignedDriver)
-                    && assignedDriver.getId() == driver.getId()) {
-                hasBooking = true;
-                final StringBuilder bookingInfo = new StringBuilder();
-
-                bookingInfo.append("Booking ID: ").append(booking.getId())
-                        .append(", Customer: ").append(booking.getCustomer().getName())
-                        .append(", Pickup: ").append(booking.getPickupLocation())
-                        .append(", Drop: ").append(booking.getDropLocation())
-                        .append(", Fare: ₹").append(booking.getFare())
-                        .append(", Status: ").append(booking.isActive() ? "Active" : "Completed");
-                System.out.println(bookingInfo);
-            }
-        }
-
-        if (!hasBooking) {
+        if (driverBookings.isEmpty()) {
             System.out.println("No bookings found for you.");
+            return;
         }
+
+        final StringBuilder bookingDetails = new StringBuilder();
+
+        for (Booking booking : driverBookings) {
+            bookingDetails.append("Booking ID: ").append(booking.getId())
+                    .append(", Customer: ").append(booking.getCustomer().getName())
+                    .append(", Pickup: ").append(booking.getPickupLocation())
+                    .append(", Drop: ").append(booking.getDropLocation())
+                    .append(", Fare: ₹").append(booking.getFare())
+                    .append(", Status: ").append(booking.isActive() ? "Active" : "Completed")
+                    .append("\n");
+        }
+
+        System.out.println(bookingDetails);
     }
+
 }

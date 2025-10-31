@@ -21,7 +21,7 @@ public interface BookingService {
     void end(final int bookingId);
 
     /** Rate a driver or taxi. */
-    void rate(final int taxiId, final double rating);
+    void rate(final int customerId, final int taxiId, final double rating);
 
     /** Singleton access to BookingService instance. */
     static BookingService getInstance() {

@@ -31,7 +31,8 @@ public class TaxiRegistrationController {
     }
 
     /** Removes a taxi by ID */
-    public void unregister(final int id) {
-        taxiRegistrationService.unregister(id);
+    public boolean unregister(final int id) {
+        return taxiRegistrationService.unregister(id);
     }
+
 }

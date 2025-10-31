@@ -9,7 +9,7 @@ public interface DriverRegistrationService {
     void register(final Driver driver);
 
     /** Unregister a driver by ID */
-    void unregister(final int id);
+    boolean unregister(final int id);
 
     /** Singleton access */
     static DriverRegistrationService getInstance() {

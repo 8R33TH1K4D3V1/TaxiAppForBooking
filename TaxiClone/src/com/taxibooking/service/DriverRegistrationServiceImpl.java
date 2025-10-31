@@ -40,8 +40,8 @@ public class DriverRegistrationServiceImpl implements DriverRegistrationService 
 
     /** Unregisters a driver by ID */
     @Override
-    public void unregister(final int driverId) {
-        driverService.removeDriver(driverId);
+    public boolean unregister(final int driverId) {
+        return driverService.removeDriver(driverId);
     }
 
 

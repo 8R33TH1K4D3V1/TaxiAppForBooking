@@ -53,9 +53,10 @@ public class TaxiServiceImpl implements TaxiService {
     }
 
     /** Remove taxi safely */
-    public void removeTaxi(final int id) {
-        taxisById.remove(id);
+    public boolean removeTaxi(final int id) {
+        return Objects.nonNull(taxisById.remove(id));
     }
+
 
     /** Register demo taxis (for initialization/testing) */
     @Override

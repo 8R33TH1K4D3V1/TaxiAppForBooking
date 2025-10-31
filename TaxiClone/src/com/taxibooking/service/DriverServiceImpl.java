@@ -60,11 +60,9 @@ public class DriverServiceImpl implements DriverService {
         }
     }
 
-    /**
-     * Remove taxi safely
-     */
-    public void removeDriver(final int id) {
-        driverMap.remove(id);
+    public boolean removeDriver(final int id) {
+        return Objects.nonNull(driverMap.remove(id));
     }
+
 
 }

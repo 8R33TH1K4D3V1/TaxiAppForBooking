@@ -122,9 +122,9 @@ public class CustomerMenu {
 
         for (final Taxi taxi : taxis) {
             final Driver driver = taxi.getDriver();
-            final String driverName = Objects.nonNull(driver) ? driver.getName() : "Not assigned";
-            final String driverPhone = Objects.nonNull(driver) ? driver.getPhoneNo() : "N/A";
-            final double driverRating = Objects.nonNull(driver) ? driver.getRating() : 0.0;
+            final String driverName = Objects.isNull(driver) ? "Not assigned" : driver.getName();
+            final String driverPhone = Objects.isNull(driver) ? "N/A" : driver.getPhoneNo();
+            final double driverRating = Objects.isNull(driver) ? 0.0 : driver.getRating();
 
             taxisInfo.append(String.format(
                     "Taxi ID: %d | Driver: %s | Phone: %s | Rating: %.1f | Seater: %d | AC: %s | Available: %s%n",
@@ -166,7 +166,7 @@ public class CustomerMenu {
         input.nextLine();
         System.out.print("Is AC available? (Yes/No): ");
         final String acInput = input.nextLine().trim().toLowerCase();
-        final boolean acRequired = acInput.equals("yes");
+        final boolean acRequired = Objects.equals(acInput, "yes");
         final int finalSeatCount = seatCount;
         final Collection<Taxi> availableTaxis = taxis.stream()
                 .filter(taxi -> taxi.isAvailable()
@@ -185,9 +185,10 @@ public class CustomerMenu {
 
             System.out.printf("Taxi ID: %d | Driver: %s | Rating: %.1f%n",
                     taxi.getId(),
-                    Objects.nonNull(driver) ? driver.getName() : "Not assigned",
-                    Objects.nonNull(driver) ? driver.getRating() : 0.0);
+                    Objects.isNull(driver) ? "Not assigned" : driver.getName(),
+                    Objects.isNull(driver) ? 0.0 : driver.getRating());
         });
+
 
         System.out.print("Enter Taxi ID to book: ");
         final int taxiId = input.nextInt();
@@ -211,7 +212,7 @@ public class CustomerMenu {
 
         System.out.print("Distance (km): ");
         final double distance = input.nextDouble();
-        final double fare = fareController.calculate(distance, selectedTaxi.isAcAvailable(), selectedTaxi.getSeater());
+        final double fare = fareController.get(distance, selectedTaxi.isAcAvailable(), selectedTaxi.getSeater());
         final Booking booking = new Booking();
 
         booking.setTaxi(selectedTaxi);
@@ -238,7 +239,7 @@ public class CustomerMenu {
         bookings.forEach(booking -> {
             final Taxi taxi = booking.getTaxi();
             final Driver driver = taxi.getDriver();
-            final String driverName = Objects.nonNull(driver) ? driver.getName() : "Not assigned";
+            final String driverName = Objects.isNull(driver) ? "Not assigned" : driver.getName();
 
             bookingsInfo.append(String.format(
                     "Booking ID: %d | Taxi ID: %d | Driver: %s | Fare: ₹%.2f | Status: %s%n",
@@ -283,7 +284,7 @@ public class CustomerMenu {
                     "Booking ID: %d | Taxi ID: %d | Driver: %s%n",
                     booking.getId(),
                     booking.getTaxi().getId(),
-                    Objects.nonNull(driver) ? driver.getName() : "Not assigned"
+                    Objects.isNull(driver) ? "Not assigned" : driver.getName()
             ));
         });
 
@@ -306,7 +307,7 @@ public class CustomerMenu {
             return;
         }
 
-        bookingController.rate(taxiId, rating);
+        bookingController.rate(customer.getId(),taxiId, rating);
         System.out.println("Thank you for rating your driver!");
     }
 
@@ -317,12 +318,12 @@ public class CustomerMenu {
 
         input.nextLine();
         System.out.print("AC required? (yes/no): ");
-        final boolean acRequired = input.nextLine().equalsIgnoreCase("yes");
+        final boolean acRequired = Objects.equals(input.nextLine().trim().toLowerCase(), "yes");
 
         System.out.print("Number of seats: ");
         final int seater = input.nextInt();
+        final double fare = fareController.get(distance, acRequired, seater);
 
-        final double fare = fareController.calculate(distance, acRequired, seater);
         System.out.printf("Estimated Fare: ₹%.2f%n", fare);
     }
 }

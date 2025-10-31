@@ -9,7 +9,7 @@ public interface TaxiRegistrationService {
     void register(final Taxi taxi);
 
     /** Remove taxi by ID */
-    void unregister(final int id);
+    boolean unregister(final int id);
 
     /** Singleton access to implementation */
     static TaxiRegistrationService getInstance() {

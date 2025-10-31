@@ -31,7 +31,7 @@ public class DriverRegistrationController {
     }
 
     /** Removes a driver by ID */
-    public void unregister(final int id) {
-        driverRegistrationService.unregister(id);
+    public boolean unregister(final int id) {
+        return driverRegistrationService.unregister(id);
     }
 }

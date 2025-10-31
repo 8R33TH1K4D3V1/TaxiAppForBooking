@@ -48,7 +48,7 @@ public class BookingController {
     }
 
     /** Rate a driver or taxi. */
-    public void rate(final int taxiId, final double rating) {
-        bookingService.rate(taxiId, rating);
+    public void rate(final int customerId, final int taxiId, final double rating) {
+        bookingService.rate(customerId, taxiId, rating);
     }
 }

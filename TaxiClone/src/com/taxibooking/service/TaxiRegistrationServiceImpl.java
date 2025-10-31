@@ -34,8 +34,8 @@ public class TaxiRegistrationServiceImpl implements TaxiRegistrationService {
     }
 
     @Override
-    public void unregister(final int taxiId) {
-        taxiService.removeTaxi(taxiId);
+    public boolean unregister(final int taxiId) {
+        return taxiService.removeTaxi(taxiId);
     }
 
 

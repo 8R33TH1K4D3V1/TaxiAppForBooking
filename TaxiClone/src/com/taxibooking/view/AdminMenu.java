@@ -46,6 +46,7 @@ public class AdminMenu {
         while (true) {
             displayMenu();
             final int choice = input.nextInt();
+
             input.nextLine();
 
             switch (choice) {
@@ -79,7 +80,7 @@ public class AdminMenu {
                 7. Remove Driver
                 8. Assign Driver to Taxi
                 9. Exit
-                Choose option: """);
+                Choose option:""");
     }
 
     /** Verifies admin credentials */
@@ -123,12 +124,12 @@ public class AdminMenu {
         do {
             acOption = input.nextLine().trim().toLowerCase();
 
-            if (!acOption.equals("yes") && !acOption.equals("no")) {
+            if (!Objects.equals(acOption, "yes") && !Objects.equals(acOption, "no")) {
                 System.out.print("Invalid input. Please enter Yes or No: ");
             }
-        } while (!acOption.equals("yes") && !acOption.equals("no"));
+        } while (!Objects.equals(acOption, "yes") && !Objects.equals(acOption, "no"));
 
-        final boolean isAcAvailable = acOption.equals("yes");
+        final boolean isAcAvailable = Objects.equals(acOption, "yes");
 
         System.out.print("Is Taxi Available? (Yes/No): ");
         String availabilityOption;
@@ -136,12 +137,12 @@ public class AdminMenu {
         do {
             availabilityOption = input.nextLine().trim().toLowerCase();
 
-            if (!availabilityOption.equals("yes") && !availabilityOption.equals("no")) {
+            if (!Objects.equals(availabilityOption, "yes") && !Objects.equals(availabilityOption, "no")) {
                 System.out.print("Invalid input. Please enter Yes or No: ");
             }
-        } while (!availabilityOption.equals("yes") && !availabilityOption.equals("no"));
+        } while (!Objects.equals(availabilityOption, "yes") && !Objects.equals(availabilityOption, "no"));
 
-        final boolean isAvailable = availabilityOption.equals("yes");
+        final boolean isAvailable = Objects.equals(availabilityOption, "yes");
         final Taxi taxi = new Taxi();
 
         taxi.setId(id);
@@ -173,7 +174,7 @@ public class AdminMenu {
         System.out.printf("Driver '%s' registered successfully.%n", name);
     }
 
-    /** Shows all taxis with driver, features, and availability details */
+    /** Displays all taxis */
     private void viewAllTaxis() {
         System.out.println("\n--- All Taxis ---");
         final Collection<Taxi> allTaxis = taxiController.get();
@@ -183,22 +184,24 @@ public class AdminMenu {
             return;
         }
 
-        final StringBuilder taxiInfo = new StringBuilder();
+        allTaxis.stream()
+                .filter(Objects::nonNull)
+                .map(taxi -> {
+                    final Driver driver = taxi.getDriver();
+                    final StringBuilder taxiDetails = new StringBuilder();
 
-        for (final Taxi taxi : allTaxis) {
-            final Driver driver = taxi.getDriver();
+                    taxiDetails.append("Taxi ID: ").append(taxi.getId())
+                            .append(" | Driver: ").append(Objects.isNull(driver) ? "Not Assigned" : driver.getName())
+                            .append(" | Phone: ").append(Objects.isNull(driver) ? "N/A" : driver.getPhoneNo())
+                            .append(" | Rating: ").append(Objects.isNull(driver) ? "N/A" : driver.getRating())
+                            .append(" | Seater: ").append(taxi.getSeater())
+                            .append(" | AC: ").append(taxi.isAcAvailable() ? "Yes" : "No")
+                            .append(" | Available: ").append(taxi.isAvailable() ? "Yes" : "No");
 
-            taxiInfo.append("Taxi ID: ").append(taxi.getId())
-                    .append(" | Driver: ").append(Objects.nonNull(driver) ? driver.getName() : "Not Assigned")
-                    .append(" | Phone: ").append(Objects.nonNull(driver) ? driver.getPhoneNo() : "N/A")
-                    .append(" | Rating: ").append(Objects.nonNull(driver) ? driver.getRating() : "N/A")
-                    .append(" | Seater: ").append(taxi.getSeater())
-                    .append(" | AC: ").append(taxi.isAcAvailable() ? "Yes" : "No")
-                    .append(" | Available: ").append(taxi.isAvailable() ? "Yes" : "No")
-                    .append("\n");
-        }
+                    return taxiDetails.toString();
+                })
 
-        System.out.print(taxiInfo);
+                .forEach(System.out::println);
     }
 
     /** Displays unassigned taxis */
@@ -252,8 +255,9 @@ public class AdminMenu {
         final int taxiId = input.nextInt();
 
         input.nextLine();
-        taxiRegistrationController.unregister(taxiId);
-        System.out.printf("Taxi ID %d removed successfully.%n", taxiId);
+        final boolean removed = taxiRegistrationController.unregister(taxiId);
+
+        System.out.printf("Taxi ID %d %s.%n", taxiId, removed ? "removed successfully" : "not found");
     }
 
     /** Removes a driver and unassigns from taxis */
@@ -262,18 +266,23 @@ public class AdminMenu {
         final int driverId = input.nextInt();
 
         input.nextLine();
-        driverRegistrationController.unregister(driverId);
-        final Collection<Taxi> taxis = taxiController.get();
+        final boolean removed = driverRegistrationController.unregister(driverId);
 
-        for (final Taxi taxi : taxis) {
-            final Driver assignedDriver = taxi.getDriver();
+        if (removed) {
+            final Collection<Taxi> taxis = taxiController.get();
 
-            if (Objects.nonNull(assignedDriver) && assignedDriver.getId() == driverId) {
-                taxi.setDriver(null);
-            }
+            taxis.stream()
+                    .filter(Objects::nonNull)
+                    .filter(taxi -> {
+                        final Driver driver = taxi.getDriver();
+                        return Objects.nonNull(driver) && driver.getId() == driverId;
+                    })
+                    .forEach(taxi -> taxi.setDriver(null));
+
+            System.out.printf("Driver ID %d removed successfully.%n", driverId);
+        } else {
+            System.out.printf("Driver ID %d not found.%n", driverId);
         }
-
-        System.out.printf("Driver ID %d removed successfully.%n", driverId);
     }
 
     /** Assigns a driver to a taxi */
@@ -283,11 +292,10 @@ public class AdminMenu {
 
         System.out.print("Enter Driver ID: ");
         final int driverId = input.nextInt();
-        input.nextLine();
 
+        input.nextLine();
         final Collection<Taxi> taxis = taxiController.get();
         final Collection<Driver> drivers = driverController.get();
-
         final Taxi selectedTaxi = taxis.stream()
                 .filter(taxi -> taxi.getId() == taxiId)
                 .findFirst()

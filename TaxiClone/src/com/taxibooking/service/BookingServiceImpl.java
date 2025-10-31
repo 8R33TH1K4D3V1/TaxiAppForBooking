@@ -104,19 +104,28 @@ public class BookingServiceImpl implements BookingService {
 
     /** Rates a taxi’s driver if valid */
     @Override
-    public void rate(final int taxiId, final double rating) {
-        bookingMap.values().forEach(innerMap ->
-                innerMap.values().forEach(booking -> {
-                    final Taxi taxi = booking.getTaxi();
+    public void rate(final int  customerId, final int taxiId, final double rating) {
 
-                    if (Objects.nonNull(taxi) && taxi.getId() == taxiId) {
-                        final Driver driver = taxi.getDriver();
+        if (customerId <= 0 || taxiId <= 0 || rating < 0.0 || rating > 5.0) {
+            return;
+        }
 
-                        if (Objects.nonNull(driver)) {
-                            driver.setRating(rating);
-                        }
-                    }
-                })
-        );
+        final Map<Integer, Booking> customerBookings = bookingMap.get(customerId);
+
+        if (Objects.isNull(customerBookings)) {
+            return;
+        }
+
+        customerBookings.values().forEach(booking -> {
+            final Taxi taxi = booking.getTaxi();
+
+            if (Objects.nonNull(taxi) && taxi.getId() == taxiId) {
+                final Driver driver = taxi.getDriver();
+
+                if (Objects.nonNull(driver)) {
+                    driver.setRating(rating);
+                }
+            }
+        });
     }
 }

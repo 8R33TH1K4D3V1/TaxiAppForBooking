@@ -7,7 +7,7 @@ package com.taxibooking.service;
 public interface FareService {
 
     /** Calculates fare using distance, AC requirement, and seater count. */
-    double calculate(final double distance, final boolean ac, final int seater);
+    double get(final double distance, final boolean ac, final int seater);
 
     /** Singleton access method. */
     static FareService getInstance() {
