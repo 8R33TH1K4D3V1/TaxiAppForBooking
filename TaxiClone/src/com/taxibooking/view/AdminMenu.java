@@ -18,7 +18,6 @@ import java.util.Scanner;
 public class AdminMenu {
 
     private final Scanner input = new Scanner(System.in);
-
     private final TaxiController taxiController;
     private final DriverController driverController;
     private final TaxiRegistrationController taxiRegistrationController;
@@ -45,9 +44,7 @@ public class AdminMenu {
 
         while (true) {
             displayMenu();
-            final int choice = input.nextInt();
-
-            input.nextLine();
+            final int choice = getIntInput("Enter choice: ");
 
             switch (choice) {
                 case 1 -> addTaxi();
@@ -79,8 +76,7 @@ public class AdminMenu {
                 6. Remove Taxi
                 7. Remove Driver
                 8. Assign Driver to Taxi
-                9. Exit
-                Choose option:""");
+                9. Exit""");
     }
 
     /** Verifies admin credentials */
@@ -96,69 +92,38 @@ public class AdminMenu {
 
     /** Adds a new taxi */
     private void addTaxi() {
-        System.out.print("Enter Taxi ID: ");
-        final int id = input.nextInt();
+        final int id = getIntInput("Enter Taxi ID: ");
 
-        System.out.print("Enter No of Seats (4 / 6 / 7): ");
         int seatCount;
 
         while (true) {
+            seatCount = getIntInput("Enter No of Seats (4 / 6 / 7): ");
 
-            if (input.hasNextInt()) {
-                seatCount = input.nextInt();
-
-                if (seatCount == 4 || seatCount == 6 || seatCount == 7) {
-                    break;
-                }
-                System.out.print("Invalid seat count. Please enter 4, 6, or 7: ");
-            } else {
-                System.out.print("Invalid input. Please enter a number (4, 6, or 7): ");
-                input.next();
+            if (seatCount == 4 || seatCount == 6 || seatCount == 7){
+                break;
             }
+            System.out.println("Invalid seat count. Please enter 4, 6, or 7.");
         }
 
-        input.nextLine();
-        System.out.print("Is AC available? (Yes/No): ");
-        String acOption;
-
-        do {
-            acOption = input.nextLine().trim().toLowerCase();
-
-            if (!Objects.equals(acOption, "yes") && !Objects.equals(acOption, "no")) {
-                System.out.print("Invalid input. Please enter Yes or No: ");
-            }
-        } while (!Objects.equals(acOption, "yes") && !Objects.equals(acOption, "no"));
-
-        final boolean isAcAvailable = Objects.equals(acOption, "yes");
-
-        System.out.print("Is Taxi Available? (Yes/No): ");
-        String availabilityOption;
-
-        do {
-            availabilityOption = input.nextLine().trim().toLowerCase();
-
-            if (!Objects.equals(availabilityOption, "yes") && !Objects.equals(availabilityOption, "no")) {
-                System.out.print("Invalid input. Please enter Yes or No: ");
-            }
-        } while (!Objects.equals(availabilityOption, "yes") && !Objects.equals(availabilityOption, "no"));
-
-        final boolean isAvailable = Objects.equals(availabilityOption, "yes");
+        final boolean isAcAvailable = getYesNoInput("Is AC available? (Yes/No): ");
+        final boolean isAvailable = getYesNoInput("Is Taxi Available? (Yes/No): ");
         final Taxi taxi = new Taxi();
 
         taxi.setId(id);
         taxi.setSeater(seatCount);
         taxi.setAcAvailable(isAcAvailable);
         taxi.setAvailable(isAvailable);
-        taxiRegistrationController.register(taxi);
-        System.out.printf("Taxi ID %d registered successfully.%n", id);
+        final int addedId = taxiRegistrationController.add(taxi);
+
+        System.out.println(addedId > 0
+                ? "Taxi ID " + addedId + " registered successfully."
+                : "Failed to register taxi. Please try again.");
     }
 
     /** Adds a new driver */
     private void addDriver() {
-        System.out.print("Enter Driver ID: ");
-        final int id = input.nextInt();
+        final int id = getIntInput("Enter Driver ID: ");
 
-        input.nextLine();
         System.out.print("Enter Driver Name: ");
         final String name = input.nextLine();
 
@@ -170,8 +135,11 @@ public class AdminMenu {
         driver.setName(name);
         driver.setPhoneNo(phoneNumber);
         driver.setRating(0.0);
-        driverRegistrationController.register(driver);
-        System.out.printf("Driver '%s' registered successfully.%n", name);
+        final int addedId = driverRegistrationController.add(driver);
+
+        System.out.println(addedId > 0
+                ? "Driver ID " + addedId + " registered successfully."
+                : "Failed to register driver. Please try again.");
     }
 
     /** Displays all taxis */
@@ -188,97 +156,88 @@ public class AdminMenu {
                 .filter(Objects::nonNull)
                 .map(taxi -> {
                     final Driver driver = taxi.getDriver();
-                    final StringBuilder taxiDetails = new StringBuilder();
 
-                    taxiDetails.append("Taxi ID: ").append(taxi.getId())
-                            .append(" | Driver: ").append(Objects.isNull(driver) ? "Not Assigned" : driver.getName())
-                            .append(" | Phone: ").append(Objects.isNull(driver) ? "N/A" : driver.getPhoneNo())
-                            .append(" | Rating: ").append(Objects.isNull(driver) ? "N/A" : driver.getRating())
-                            .append(" | Seater: ").append(taxi.getSeater())
-                            .append(" | AC: ").append(taxi.isAcAvailable() ? "Yes" : "No")
-                            .append(" | Available: ").append(taxi.isAvailable() ? "Yes" : "No");
-
-                    return taxiDetails.toString();
+                    return String.format(
+                            "Taxi ID: %d | Driver: %s | Phone: %s | Rating: %s | Seater: %d | AC: %s | Available: %s",
+                            taxi.getId(),
+                            Objects.isNull(driver) ? "Not Assigned" : driver.getName(),
+                            Objects.isNull(driver) ? "N/A" : driver.getPhoneNo(),
+                            Objects.isNull(driver) ? "N/A" : driver.getRating(),
+                            taxi.getSeater(),
+                            taxi.isAcAvailable() ? "Yes" : "No",
+                            taxi.isAvailable() ? "Yes" : "No"
+                    );
                 })
-
                 .forEach(System.out::println);
     }
 
     /** Displays unassigned taxis */
     private void viewUnassignedTaxis() {
         System.out.println("\n--- Unassigned Taxis ---");
-        final StringBuilder unassignedTaxiInfo = new StringBuilder();
         final Collection<Taxi> taxis = taxiController.get();
+        final StringBuilder info = new StringBuilder();
 
         taxis.stream()
-                .filter(taxi -> taxi.getDriver() == null)
-                .forEach(taxi -> unassignedTaxiInfo.append("Taxi ID: ").append(taxi.getId())
-                        .append(" | Seats: ").append(taxi.getSeater())
-                        .append(" | AC: ").append(taxi.isAcAvailable() ? "Yes" : "No")
-                        .append(" | Available: ").append(taxi.isAvailable() ? "Yes" : "No")
-                        .append("\n"));
+                .filter(taxi -> Objects.nonNull(taxi) && taxi.getDriver() == null)
+                .forEach(taxi -> info.append(String.format(
+                        "Taxi ID: %d | Seats: %d | AC: %s | Available: %s%n",
+                        taxi.getId(),
+                        taxi.getSeater(),
+                        taxi.isAcAvailable() ? "Yes" : "No",
+                        taxi.isAvailable() ? "Yes" : "No")));
 
-        System.out.print(unassignedTaxiInfo.isEmpty() ? "All taxis are assigned.\n" : unassignedTaxiInfo);
+        System.out.print(info.isEmpty() ? "All taxis are assigned.\n" : info);
     }
 
     /** Displays unassigned drivers */
     private void viewUnassignedDrivers() {
         System.out.println("\n--- Unassigned Drivers ---");
-        final StringBuilder unassignedDriverInfo = new StringBuilder();
         final Collection<Driver> drivers = driverController.get();
         final Collection<Taxi> taxis = taxiController.get();
+        final StringBuilder info = new StringBuilder();
 
         for (final Driver driver : drivers) {
-            final boolean isAssigned = taxis.stream()
+            final boolean assigned = taxis.stream()
                     .anyMatch(taxi -> {
                         final Driver assignedDriver = taxi.getDriver();
-                        return Objects.nonNull(assignedDriver) && assignedDriver.getId() == driver.getId();
+
+                        return Objects.nonNull(assignedDriver)
+                                && assignedDriver.getId() == driver.getId();
                     });
 
-            if (!isAssigned) {
-                unassignedDriverInfo.append("Driver ID: ").append(driver.getId())
-                        .append(" | Name: ").append(driver.getName())
-                        .append(" | Phone: ").append(driver.getPhoneNo())
-                        .append(" | Rating: ").append(driver.getRating())
-                        .append("\n");
+            if (!assigned) {
+                info.append(String.format(
+                        "Driver ID: %d | Name: %s | Phone: %s | Rating: %.1f%n",
+                        driver.getId(), driver.getName(), driver.getPhoneNo(), driver.getRating()));
             }
         }
 
-        System.out.println(unassignedDriverInfo.isEmpty()
-                ? "No unassigned drivers available."
-                : unassignedDriverInfo);
+        System.out.print(info.isEmpty() ? "No unassigned drivers available.\n" : info);
     }
 
-    /** Removes a taxi by ID */
+    /** Removes a taxi */
     private void removeTaxi() {
-        System.out.print("Enter Taxi ID to remove: ");
-        final int taxiId = input.nextInt();
-
-        input.nextLine();
-        final boolean removed = taxiRegistrationController.unregister(taxiId);
+        final int taxiId = getIntInput("Enter Taxi ID to remove: ");
+        final boolean removed = taxiRegistrationController.remove(taxiId);
 
         System.out.printf("Taxi ID %d %s.%n", taxiId, removed ? "removed successfully" : "not found");
     }
 
-    /** Removes a driver and unassigns from taxis */
+    /** Removes a driver */
     private void removeDriver() {
-        System.out.print("Enter Driver ID to remove: ");
-        final int driverId = input.nextInt();
-
-        input.nextLine();
-        final boolean removed = driverRegistrationController.unregister(driverId);
+        final int driverId = getIntInput("Enter Driver ID to remove: ");
+        final boolean removed = driverRegistrationController.remove(driverId);
 
         if (removed) {
             final Collection<Taxi> taxis = taxiController.get();
 
             taxis.stream()
-                    .filter(Objects::nonNull)
                     .filter(taxi -> {
                         final Driver driver = taxi.getDriver();
+
                         return Objects.nonNull(driver) && driver.getId() == driverId;
                     })
                     .forEach(taxi -> taxi.setDriver(null));
-
             System.out.printf("Driver ID %d removed successfully.%n", driverId);
         } else {
             System.out.printf("Driver ID %d not found.%n", driverId);
@@ -287,37 +246,69 @@ public class AdminMenu {
 
     /** Assigns a driver to a taxi */
     private void assignDriverToTaxi() {
-        System.out.print("Enter Taxi ID: ");
-        final int taxiId = input.nextInt();
-
-        System.out.print("Enter Driver ID: ");
-        final int driverId = input.nextInt();
-
-        input.nextLine();
+        final int taxiId = getIntInput("Enter Taxi ID: ");
+        final int driverId = getIntInput("Enter Driver ID: ");
         final Collection<Taxi> taxis = taxiController.get();
         final Collection<Driver> drivers = driverController.get();
-        final Taxi selectedTaxi = taxis.stream()
-                .filter(taxi -> taxi.getId() == taxiId)
+
+        final Taxi taxi = taxis.stream()
+                .filter(t -> t.getId() == taxiId)
                 .findFirst()
                 .orElse(null);
 
-        final Driver selectedDriver = drivers.stream()
-                .filter(driver -> driver.getId() == driverId)
+        final Driver driver = drivers.stream()
+                .filter(d -> d.getId() == driverId)
                 .findFirst()
                 .orElse(null);
 
-        if (Objects.isNull(selectedTaxi)) {
+        if (Objects.isNull(taxi)) {
             System.out.println("Taxi not found!");
             return;
         }
 
-        if (Objects.isNull(selectedDriver)) {
+        if (Objects.isNull(driver)) {
             System.out.println("Driver not found!");
             return;
         }
 
-        selectedTaxi.setDriver(selectedDriver);
+        taxi.setDriver(driver);
         System.out.printf("Driver '%s' assigned to Taxi ID %d.%n",
-                selectedDriver.getName(), selectedTaxi.getId());
+                driver.getName(), taxi.getId());
+    }
+
+    //Helper Methods
+
+    private int getIntInput(final String prompt) {
+
+        while (true) {
+            System.out.print(prompt);
+
+            if (input.hasNextInt()) {
+                final int value = input.nextInt();
+
+                input.nextLine();
+                return value;
+            }
+            System.out.println("Invalid input. Please enter a valid number.");
+            input.nextLine();
+        }
+    }
+
+    private boolean getYesNoInput(final String prompt) {
+
+        while (true) {
+            System.out.print(prompt);
+            final String response = input.nextLine().trim().toLowerCase();
+
+            if (Objects.equals(response, "yes")){
+                return true;
+            }
+
+            if (Objects.equals(response, "no")){
+                return false;
+            }
+
+            System.out.println("Invalid input. Please enter Yes or No.");
+        }
     }
 }

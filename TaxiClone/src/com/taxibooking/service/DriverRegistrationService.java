@@ -6,10 +6,10 @@ import com.taxibooking.model.Driver;
 public interface DriverRegistrationService {
 
     /** Register a driver */
-    void register(final Driver driver);
+    int add(final Driver driver);
 
     /** Unregister a driver by ID */
-    boolean unregister(final int id);
+    boolean remove(final int id);
 
     /** Singleton access */
     static DriverRegistrationService getInstance() {

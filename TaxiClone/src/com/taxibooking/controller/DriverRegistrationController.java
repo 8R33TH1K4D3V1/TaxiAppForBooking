@@ -26,12 +26,12 @@ public class DriverRegistrationController {
     }
 
     /** Registers a driver */
-    public void register(final Driver driver) {
-        driverRegistrationService.register(driver);
+    public int add(final Driver driver) {
+      return driverRegistrationService.add(driver);
     }
 
     /** Removes a driver by ID */
-    public boolean unregister(final int id) {
-        return driverRegistrationService.unregister(id);
+    public boolean remove(final int id) {
+        return driverRegistrationService.remove(id);
     }
 }

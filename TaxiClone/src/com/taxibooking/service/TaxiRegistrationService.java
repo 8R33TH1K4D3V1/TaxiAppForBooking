@@ -6,10 +6,10 @@ import com.taxibooking.model.Taxi;
 public interface TaxiRegistrationService {
 
     /** Add taxi */
-    void register(final Taxi taxi);
+    int add(final Taxi taxi);
 
     /** Remove taxi by ID */
-    boolean unregister(final int id);
+    boolean remove(final int id);
 
     /** Singleton access to implementation */
     static TaxiRegistrationService getInstance() {

@@ -39,7 +39,7 @@ public class CustomerMenu {
 
         do {
             menu();
-            choice = choice();
+            choice = readInt("Enter your choice: ");
 
             switch (choice) {
                 case 1 -> viewTaxis();
@@ -58,38 +58,29 @@ public class CustomerMenu {
     private Customer login() {
 
         while (true) {
-            System.out.print("Enter your Customer ID: ");
+            final int customerId = readInt("Enter your Customer ID: ");
+            final Customer existingCustomer = customerList.stream()
+                    .filter(c -> c.getId() == customerId)
+                    .findFirst()
+                    .orElse(null);
 
-            if (!input.hasNextInt()) {
-                System.out.println("Invalid ID. Try again.");
-                input.nextLine();
-                continue;
+            if (existingCustomer != null) {
+                System.out.println("\nWelcome back, " + existingCustomer.getName() + "!\n");
+                return existingCustomer;
             }
 
-            final int customerId = input.nextInt();
-
-            input.nextLine();
             System.out.print("Enter your Name: ");
             final String customerName = input.nextLine().trim();
-
-            for (final Customer existingCustomer : customerList) {
-
-                if (existingCustomer.getId() == customerId) {
-                    System.out.println("\nWelcome back, " + existingCustomer.getName() + "!\n");
-                    return existingCustomer;
-                }
-            }
-
             final Customer newCustomer = new Customer();
 
             newCustomer.setId(customerId);
             newCustomer.setName(customerName);
             customerList.add(newCustomer);
+
             System.out.println("\nWelcome, " + newCustomer.getName() + "!\n");
             return newCustomer;
         }
     }
-
 
     /** Displays customer menu options */
     private void menu() {
@@ -103,13 +94,7 @@ public class CustomerMenu {
         System.out.println("0. Back");
     }
 
-    /** Reads user's menu choice */
-    private int choice() {
-        System.out.print("Enter your choice: ");
-        return input.nextInt();
-    }
-
-    /** Displays all taxis and driver details */
+    /** Displays all taxis with assigned drivers */
     private void viewTaxis() {
         final Collection<Taxi> taxis = taxiController.get();
 
@@ -118,25 +103,24 @@ public class CustomerMenu {
             return;
         }
 
-        final StringBuilder taxisInfo = new StringBuilder("\n--- ALL TAXIS ---\n");
+        final StringBuilder taxisInfo = new StringBuilder("\n--- AVAILABLE TAXIS WITH DRIVERS ---\n");
 
-        for (final Taxi taxi : taxis) {
-            final Driver driver = taxi.getDriver();
-            final String driverName = Objects.isNull(driver) ? "Not assigned" : driver.getName();
-            final String driverPhone = Objects.isNull(driver) ? "N/A" : driver.getPhoneNo();
-            final double driverRating = Objects.isNull(driver) ? 0.0 : driver.getRating();
+        taxis.stream()
+                .filter(taxi -> Objects.nonNull(taxi.getDriver()))
+                .forEach(taxi -> {
+                    final Driver driver = taxi.getDriver();
 
-            taxisInfo.append(String.format(
-                    "Taxi ID: %d | Driver: %s | Phone: %s | Rating: %.1f | Seater: %d | AC: %s | Available: %s%n",
-                    taxi.getId(),
-                    driverName,
-                    driverPhone,
-                    driverRating,
-                    taxi.getSeater(),
-                    taxi.isAcAvailable() ? "Yes" : "No",
-                    taxi.isAvailable() ? "Yes" : "No"
-            ));
-        }
+                    taxisInfo.append(String.format(
+                            "Taxi ID: %d | Driver: %s | Phone: %s | Rating: %.1f | Seater: %d | AC: %s | Available: %s%n",
+                            taxi.getId(),
+                            driver.getName(),
+                            driver.getPhoneNo(),
+                            driver.getRating(),
+                            taxi.getSeater(),
+                            taxi.isAcAvailable() ? "Yes" : "No",
+                            taxi.isAvailable() ? "Yes" : "No"
+                    ));
+                });
 
         System.out.print(taxisInfo);
     }
@@ -153,8 +137,7 @@ public class CustomerMenu {
         int seatCount;
 
         while (true) {
-            System.out.print("Enter number of seats (4, 6, or 7): ");
-            seatCount = input.nextInt();
+            seatCount = readInt("Enter number of seats (4, 6, or 7): ");
 
             if (seatCount == 4 || seatCount == 6 || seatCount == 7) {
                 break;
@@ -163,10 +146,7 @@ public class CustomerMenu {
             System.out.println("Invalid input. Enter 4, 6, or 7.");
         }
 
-        input.nextLine();
-        System.out.print("Is AC available? (Yes/No): ");
-        final String acInput = input.nextLine().trim().toLowerCase();
-        final boolean acRequired = Objects.equals(acInput, "yes");
+        final boolean acRequired = readYesNo("Is AC available? (Yes/No): ");
         final int finalSeatCount = seatCount;
         final Collection<Taxi> availableTaxis = taxis.stream()
                 .filter(taxi -> taxi.isAvailable()
@@ -189,11 +169,7 @@ public class CustomerMenu {
                     Objects.isNull(driver) ? 0.0 : driver.getRating());
         });
 
-
-        System.out.print("Enter Taxi ID to book: ");
-        final int taxiId = input.nextInt();
-
-        input.nextLine();
+        final int taxiId = readInt("Enter Taxi ID to book: ");
         final Taxi selectedTaxi = availableTaxis.stream()
                 .filter(taxi -> taxi.getId() == taxiId)
                 .findFirst()
@@ -209,9 +185,7 @@ public class CustomerMenu {
 
         System.out.print("Drop location: ");
         final String dropLocation = input.nextLine();
-
-        System.out.print("Distance (km): ");
-        final double distance = input.nextDouble();
+        final double distance = readDouble("Distance (km): ");
         final double fare = fareController.get(distance, selectedTaxi.isAcAvailable(), selectedTaxi.getSeater());
         final Booking booking = new Booking();
 
@@ -256,8 +230,7 @@ public class CustomerMenu {
 
     /** Ends an active booking */
     private void endBooking(final Customer customer) {
-        System.out.print("Enter Booking ID to end: ");
-        final int bookingId = input.nextInt();
+        final int bookingId = readInt("Enter Booking ID to end: ");
 
         bookingController.end(bookingId);
         System.out.println("Booking ended successfully.");
@@ -289,8 +262,7 @@ public class CustomerMenu {
         });
 
         System.out.print(completedInfo);
-        System.out.print("Enter Taxi ID to rate: ");
-        final int taxiId = input.nextInt();
+        final int taxiId = readInt("Enter Taxi ID to rate: ");
         final boolean validTaxi = completedBookings.stream()
                 .anyMatch(booking -> booking.getTaxi().getId() == taxiId);
 
@@ -299,31 +271,93 @@ public class CustomerMenu {
             return;
         }
 
-        System.out.print("Enter rating (0.0 - 5.0): ");
-        final double rating = input.nextDouble();
+        double rating;
 
-        if (rating < 0.0 || rating > 5.0) {
-            System.out.println("Invalid rating. Please enter a value between 0.0 and 5.0.");
-            return;
+        while (true) {
+            rating = readDouble("Enter rating (0.0 - 5.0): ");
+
+            if (rating >= 0.0 && rating <= 5.0){
+                break;
+            }
+            System.out.println("Invalid rating. Please enter between 0.0 and 5.0.");
         }
 
-        bookingController.rate(customer.getId(),taxiId, rating);
+        bookingController.rate(customer.getId(), taxiId, rating);
         System.out.println("Thank you for rating your driver!");
     }
 
     /** Calculates fare estimate */
     private void calculateFare() {
-        System.out.print("Enter distance (km): ");
-        final double distance = input.nextDouble();
+        final double distance = readDouble("Enter distance (km): ");
+        final boolean acRequired = readYesNo("AC required? (Yes/No): ");
 
-        input.nextLine();
-        System.out.print("AC required? (yes/no): ");
-        final boolean acRequired = Objects.equals(input.nextLine().trim().toLowerCase(), "yes");
+        int seater;
 
-        System.out.print("Number of seats: ");
-        final int seater = input.nextInt();
+        while (true) {
+            seater = readInt("Enter number of seats (4, 6, or 7): ");
+
+            if (seater == 4 || seater == 6 || seater == 7) {
+                break;
+            }
+
+            System.out.println("Invalid input. Enter 4, 6, or 7.");
+        }
         final double fare = fareController.get(distance, acRequired, seater);
 
         System.out.printf("Estimated Fare: ₹%.2f%n", fare);
+    }
+
+    /* ======== SAFE INPUT HELPERS ======== */
+
+    private int readInt(final String message) {
+
+        while (true) {
+            System.out.print(message);
+
+            if (input.hasNextInt()) {
+                final int value = input.nextInt();
+
+                input.nextLine();
+                return value;
+            } else {
+                System.out.println("Invalid input. Please enter a number.");
+                input.nextLine();
+            }
+        }
+    }
+
+    private double readDouble(final String message) {
+
+        while (true) {
+            System.out.print(message);
+
+            if (input.hasNextDouble()) {
+                final double value = input.nextDouble();
+
+                input.nextLine();
+                return value;
+            } else {
+                System.out.println("Invalid input. Please enter a numeric value.");
+                input.nextLine();
+            }
+        }
+    }
+
+    private boolean readYesNo(final String message) {
+
+        while (true) {
+            System.out.print(message);
+            final String response = input.nextLine().trim().toLowerCase();
+
+            if (Objects.equals(response, "yes")) {
+                return true;
+            }
+
+            if (Objects.equals(response, "no")){
+                return false;
+            }
+
+            System.out.println("Invalid input. Please enter 'Yes' or 'No'.");
+        }
     }
 }

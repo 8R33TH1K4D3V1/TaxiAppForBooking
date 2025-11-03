@@ -31,16 +31,19 @@ public class DriverRegistrationServiceImpl implements DriverRegistrationService 
 
     /** Registers a new driver */
     @Override
-    public void register(final Driver driver) {
+    public int  add(final Driver driver) {
 
         if (Objects.nonNull(driver)) {
-            driverService.addDriver(driver);
+           driverService.addDriver(driver);
+           return driver.getId();
         }
+
+        return -1;
     }
 
     /** Unregisters a driver by ID */
     @Override
-    public boolean unregister(final int driverId) {
+    public boolean remove(final int driverId) {
         return driverService.removeDriver(driverId);
     }
 

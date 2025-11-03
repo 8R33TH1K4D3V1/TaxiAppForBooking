@@ -77,20 +77,31 @@ public class DriverMenu {
     /**
      * Handles driver login using driver ID.
      */
+    /** Handles driver login */
     private Driver login() {
-        System.out.print("Enter your Driver ID: ");
-        final int driverId = input.nextInt();
 
-        input.nextLine();
-        final Driver driver = get(driverId);
+        while (true) {
+            System.out.print("Enter your Driver ID: ");
 
-        if (Objects.isNull(driver)) {
-            System.out.println("Driver ID not found. Returning to main menu...");
-            return null;
+            if (!input.hasNextInt()) {
+                System.out.println("Invalid ID. Try again.");
+                input.nextLine();
+                continue;
+            }
+
+            final int driverId = input.nextInt();
+
+            input.nextLine();
+            final Driver driver = get(driverId);
+
+            if (Objects.isNull(driver)) {
+                System.out.println("Driver ID not found. Returning to main menu...");
+                return null;
+            }
+
+            System.out.println("Welcome, " + driver.getName() + "!");
+            return driver;
         }
-
-        System.out.println("Welcome, " + driver.getName() + "!");
-        return driver;
     }
 
     /**
@@ -98,12 +109,12 @@ public class DriverMenu {
      */
     private Driver get(final int id) {
         return taxiController.get().stream()
-                .filter(Objects::nonNull)
                 .map(Taxi::getDriver)
                 .filter(driver -> Objects.nonNull(driver) && driver.getId() == id)
                 .findFirst()
                 .orElse(null);
     }
+
 
     /**
      * Allows driver to edit profile details.
@@ -136,7 +147,6 @@ public class DriverMenu {
     private void viewCurrentBookings(final Driver driver) {
         System.out.println("\n--- YOUR CURRENT BOOKINGS ---");
         final Collection<Booking> bookings = bookingController.get().stream()
-                .filter(Objects::nonNull)
                 .filter(booking -> Objects.nonNull(booking.getTaxi())
                         && Objects.nonNull(booking.getTaxi().getDriver())
                         && booking.getTaxi().getDriver().getId() == driver.getId()
@@ -161,7 +171,6 @@ public class DriverMenu {
         System.out.print(bookingInfo);
     }
 
-
     /**
      * Displays booking history (active and completed).
      */
@@ -182,7 +191,7 @@ public class DriverMenu {
 
         final StringBuilder bookingDetails = new StringBuilder();
 
-        for (Booking booking : driverBookings) {
+        for (final Booking booking : driverBookings) {
             bookingDetails.append("Booking ID: ").append(booking.getId())
                     .append(", Customer: ").append(booking.getCustomer().getName())
                     .append(", Pickup: ").append(booking.getPickupLocation())

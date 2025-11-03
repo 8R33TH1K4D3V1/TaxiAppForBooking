@@ -26,15 +26,18 @@ public class TaxiRegistrationServiceImpl implements TaxiRegistrationService {
     }
 
     @Override
-    public void register(final Taxi taxi) {
+    public int add(final Taxi taxi) {
 
         if (Objects.nonNull(taxi)) {
             taxiService.addTaxi(taxi);
+            return taxi.getId();
         }
+
+        return -1;
     }
 
     @Override
-    public boolean unregister(final int taxiId) {
+    public boolean remove(final int taxiId) {
         return taxiService.removeTaxi(taxiId);
     }
 

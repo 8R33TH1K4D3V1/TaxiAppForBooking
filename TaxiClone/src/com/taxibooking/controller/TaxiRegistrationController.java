@@ -26,13 +26,13 @@ public class TaxiRegistrationController {
     }
 
     /** Registers a taxi */
-    public void register(final Taxi taxi) {
-        taxiRegistrationService.register(taxi);
+    public int add(final Taxi taxi) {
+        return taxiRegistrationService.add(taxi);
     }
 
     /** Removes a taxi by ID */
-    public boolean unregister(final int id) {
-        return taxiRegistrationService.unregister(id);
+    public boolean remove(final int id) {
+        return taxiRegistrationService.remove(id);
     }
 
 }
