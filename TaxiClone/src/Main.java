@@ -10,6 +10,7 @@ import com.taxibooking.view.DriverMenu;
 import com.taxibooking.view.MainMenu;
 
 
+
 public final class Main {
 
     private final BookingController bookingController;
@@ -30,7 +31,7 @@ public final class Main {
         this.taxiRegController = TaxiRegistrationController.getInstance();
         this.customerMenu = new CustomerMenu(bookingController);
         this.driverMenu = new DriverMenu(bookingController, driverController);
-        this.adminMenu = new AdminMenu(taxiController, driverController, taxiRegController, driverRegController);
+        this.adminMenu = new AdminMenu(taxiController, taxiRegController,driverRegController,driverController);
         this.mainMenu = new MainMenu(customerMenu, adminMenu, driverMenu);
     }
 

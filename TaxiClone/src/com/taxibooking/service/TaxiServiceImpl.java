@@ -1,7 +1,6 @@
 package com.taxibooking.service;
 
 import com.taxibooking.model.Taxi;
-import com.taxibooking.model.Driver;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -16,105 +15,95 @@ import java.util.Objects;
  */
 public class TaxiServiceImpl implements TaxiService {
 
-    /** Stores taxis by their ID for quick access */
     private final Map<Integer, Taxi> taxisById = new HashMap<>();
 
-    /** Private constructor */
     private TaxiServiceImpl() {}
 
-    /** Singleton holder (Bill Pugh pattern) */
     private static final class Instance {
         private static final TaxiServiceImpl SERVICE = new TaxiServiceImpl();
     }
 
-    /** Returns Singleton instance */
     public static TaxiServiceImpl getInstance() {
         return Instance.SERVICE;
     }
 
-    /** Get all taxis (read-only view) */
     @Override
     public Collection<Taxi> get() {
         return Collections.unmodifiableCollection(taxisById.values());
     }
 
-    /** Get taxi by ID (null if not found) */
     @Override
     public Taxi get(final int id) {
         return taxisById.get(id);
     }
 
-    /** Add new taxi safely */
     public void addTaxi(final Taxi taxi) {
-
         if (Objects.nonNull(taxi)) {
             taxisById.put(taxi.getId(), taxi);
         }
     }
 
-    /** Remove taxi safely */
     public boolean removeTaxi(final int id) {
         return Objects.nonNull(taxisById.remove(id));
     }
 
-
-    /** Register demo taxis (for initialization/testing) */
     @Override
     public void registerDemoTaxis() {
-        final Driver d1 = new Driver();
-        d1.setId(101);
-        d1.setName("Ramesh");
-        d1.setPhoneNo("7373771722");
-        d1.setRating(4.5);
-
         final Taxi t1 = new Taxi();
+
         t1.setId(1);
-        t1.setDriver(d1);
         t1.setSeater(4);
         t1.setAcAvailable(true);
         t1.setAvailable(true);
+        t1.getDriver().setId(101);
+        t1.getDriver().setName("Ramesh");
+        t1.getDriver().setPhoneNo("7373771722");
+        t1.getDriver().setRating(4.5);
         taxisById.put(t1.getId(), t1);
-
-        final Driver d2 = new Driver();
-        d2.setId(102);
-        d2.setName("Nick");
-        d2.setPhoneNo("8484998446");
-        d2.setRating(4.7);
 
         final Taxi t2 = new Taxi();
         t2.setId(2);
-        t2.setDriver(d2);
         t2.setSeater(6);
-        t2.setAcAvailable(true);
+        t2.setAcAvailable(false);
         t2.setAvailable(true);
+        t2.getDriver().setId(102);
+        t2.getDriver().setName("Suresh");
+        t2.getDriver().setPhoneNo("9876543210");
+        t2.getDriver().setRating(4.7);
         taxisById.put(t2.getId(), t2);
-
-        final Driver d3 = new Driver();
-        d3.setId(103);
-        d3.setName("Mike");
-        d3.setPhoneNo("9442371722");
-        d3.setRating(4.2);
 
         final Taxi t3 = new Taxi();
         t3.setId(3);
-        t3.setDriver(d3);
-        t3.setSeater(6);
-        t3.setAcAvailable(false);
+        t3.setSeater(4);
+        t3.setAcAvailable(true);
         t3.setAvailable(true);
+        t3.getDriver().setId(103);
+        t3.getDriver().setName("Anil");
+        t3.getDriver().setPhoneNo("9123456789");
+        t3.getDriver().setRating(4.6);
         taxisById.put(t3.getId(), t3);
-
-        final Driver d4 = new Driver();
-        d4.setId(104);
-        d4.setName("Danny");
-        d4.setPhoneNo("9443701100");
-        d4.setRating(4.8);
 
         final Taxi t4 = new Taxi();
         t4.setId(4);
-        t4.setDriver(d4);
-        t4.setSeater(4);
+        t4.setSeater(7);
         t4.setAcAvailable(false);
         t4.setAvailable(true);
+        t4.getDriver().setId(104);
+        t4.getDriver().setName("Karthik");
+        t4.getDriver().setPhoneNo("9988776655");
+        t4.getDriver().setRating(4.4);
         taxisById.put(t4.getId(), t4);
+
+        final Taxi t5 = new Taxi();
+        t5.setId(5);
+        t5.setSeater(4);
+        t5.setAcAvailable(true);
+        t5.setAvailable(true);
+        t5.getDriver().setId(105);
+        t5.getDriver().setName("Priya");
+        t5.getDriver().setPhoneNo("9012345678");
+        t5.getDriver().setRating(4.8);
+        taxisById.put(t5.getId(), t5);
+
     }
 }

@@ -4,56 +4,28 @@ package com.taxibooking.model;
  * Represents a taxi in the taxi booking system.
  * Stores ID, assigned driver, seater count, AC availability, and current availability.
  */
+
+
 public class Taxi {
-
     private int id;
-    private Driver driver;
     private int seater;
-    private boolean isAcAvailable;
-    private boolean isAvailable;
+    private boolean acAvailable;
+    private boolean available;
 
-    /** Default constructor */
-    public Taxi() {}
+    private Driver driver = new Driver();
 
-    /** Getters */
-    public int getId() {
-        return id;
-    }
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
 
-    public Driver getDriver() {
-        return driver;
-    }
+    public int getSeater() { return seater; }
+    public void setSeater(int seater) { this.seater = seater; }
 
-    public int getSeater() {
-        return seater;
-    }
+    public boolean isAcAvailable() { return acAvailable; }
+    public void setAcAvailable(boolean acAvailable) { this.acAvailable = acAvailable; }
 
-    public boolean isAcAvailable() {
-        return isAcAvailable;
-    }
+    public boolean isAvailable() { return available; }
+    public void setAvailable(boolean available) { this.available = available; }
 
-    public boolean isAvailable() {
-        return isAvailable;
-    }
-
-    /** Setters */
-    public void setId(final int id) {
-        this.id = id;
-    }
-
-    public void setDriver(final Driver driver) {
-        this.driver = driver;
-    }
-
-    public void setSeater(final int seater) {
-        this.seater = seater;
-    }
-
-    public void setAcAvailable(final boolean acAvailable) {
-        this.isAcAvailable = acAvailable;
-    }
-
-    public void setAvailable(final boolean available) {
-        this.isAvailable = available;
-    }
+    public Driver getDriver() { return driver; }
+    public void setDriver(Driver driver) { this.driver = driver; }
 }
